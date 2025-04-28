@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Hero() {
     return (
         <section className="bg-gradient-to-r from-[#0a0a9e] to-[#0a0a2a] text-white py-24 text-center">
@@ -10,14 +11,18 @@ export default function Hero() {
                     service await you.
                 </p>
                 <div className="mt-10 flex justify-center gap-4 flex-wrap">
+                    <Link href="/auth/login">
                     <button
                         className="bg-white text-black px-6 py-3 rounded-lg text-base font-semibold shadow-md hover:bg-gray-100 transition">
                         Login
                     </button>
+                    </Link>
+                    <Link href="/home">
                     <button
                         className="bg-sky-300 text-black px-6 py-3 rounded-lg text-base font-semibold shadow-md hover:bg-sky-200 transition">
                         Explore flights
                     </button>
+                    </Link>
                 </div>
             </div>
         </section>

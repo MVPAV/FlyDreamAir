@@ -1,5 +1,5 @@
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
-
+import Link from "next/link";
 export default function Footer() {
     return (
         <footer className="bg-[#0a0a2a] text-white px-6 py-12">
@@ -21,10 +21,10 @@ export default function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
                     <ul className="space-y-2 text-sm">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Manage Booking</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">About Us</a></li>
+                        <li><Link href="/home">Home</Link></li>
+                        <li><Link href="/manage-booking">Manage Booking</Link></li>
+                        <li><Link href="/our-services">Services</Link></li>
+                        <li><Link href="/">About Us</Link></li>
                     </ul>
                 </div>
 
@@ -32,11 +32,11 @@ export default function Footer() {
                 <div>
                     <h3 className="text-lg font-semibold mb-4">Help & Support</h3>
                     <ul className="space-y-2 text-sm">
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Baggage Information</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><Link href="#">FAQs</Link></li>
+                        <li><Link href="#">Baggage Information</Link></li>
+                        <li><Link href="#">Contact Us</Link></li>
+                        <li><Link href="#">Privacy Policy</Link></li>
+                        <li><Link href="#">Terms & Conditions</Link></li>
                     </ul>
                 </div>
 
