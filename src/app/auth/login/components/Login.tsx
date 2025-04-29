@@ -3,16 +3,37 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-
+import {login} from "src/services/auth"
+import {useRouter} from "next/navigation"
 
 const LoginForm = () => {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(""); // thêm state lỗi nếu cần báo lỗi
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!email || !password) {
+            setError("Email and password are required");
+            return;
+        }
+
+        try {
+            const res = await login(email, password);
+
+            if (res.token) {
+                localStorage.setItem('token', res.token); // lưu token vào localStorage
+                router.push('/'); // redirect về trang chủ
+            } else {
+                setError(res.message || "Login failed");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Something went wrong");
+        }
     };
 
     return (
