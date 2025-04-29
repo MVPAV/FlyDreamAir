@@ -10,7 +10,7 @@ export default function OurServicesSection() {
 
     return (
         <section className="bg-white py-20 px-6">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-blue-900 jus">Our Services</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-blue-900 text-center">Our Services</h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-8">
                 Enhance your journey with our range of services designed to make your flight more comfortable and
                 enjoyable.
