@@ -15,6 +15,7 @@ const BaggageCounter: React.FC<BaggageCounterProps> = ({
   return (
     <div className="flex gap-7 text-xl text-black whitespace-nowrap">
       <button
+      
         onClick={onDecrement}
         className="px-4 py-1.5 rounded-xl border border-solid border-gray-300 border-opacity-30 hover:bg-blue-300 transition-colors duration-200"
         aria-label="Decrease baggage count"
