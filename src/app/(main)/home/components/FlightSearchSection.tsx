@@ -77,10 +77,20 @@ export default function FlightSearchSection() {
                             {/* Location fields */}
                             <div className="grid grid-cols-2 gap-4">
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option>From</option>
+                                    <option value="" disabled selected >From</option>
+                                    <option value="syd">Sydney</option>
+                                    <option value="mel">Melbourne</option>
+                                    <option value="bri">Brisbane</option>
+                                    <option value="per">Perth</option>
+                                    <option value="ade">Adelaide</option>
                                 </select>
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option>To</option>
+                                    <option value="" disabled selected >To</option>
+                                    <option value="syd">Sydney</option>
+                                    <option value="mel">Melbourne</option>
+                                    <option value="bri">Brisbane</option>
+                                    <option value="per">Perth</option>
+                                    <option value="ade">Adelaide</option>
                                 </select>
                             </div>
 
@@ -111,7 +121,9 @@ export default function FlightSearchSection() {
                                     <option>1 Adult</option>
                                 </select>
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option>Economy</option>
+                                    <option value="eco">Economy</option>
+                                    <option value="p_eco">Premium Economy</option>
+                                    <option value="bus">Business</option>
                                 </select>
                             </div>
 
