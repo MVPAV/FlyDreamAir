@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
+import PassengerDropdown from '../components/PassengerDropDown';
 
 export default function FlightSearchSection() {
     const [activeTab, setActiveTab] = useState('search');
@@ -117,9 +118,7 @@ export default function FlightSearchSection() {
 
                             {/* Passengers and class */}
                             <div className="grid grid-cols-2 gap-4">
-                                <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option>1 Adult</option>
-                                </select>
+                                <PassengerDropdown />
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
                                     <option value="eco">Economy</option>
                                     <option value="p_eco">Premium Economy</option>
