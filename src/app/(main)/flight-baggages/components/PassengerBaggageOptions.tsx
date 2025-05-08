@@ -5,14 +5,24 @@ import BaggageCounter from "./BaggageCounter";
 interface PassengerBaggageOptionsProps {
   passengerIndex: number;
   onBaggageChange: (passengerIndex: number, standardCount: number, oversizedCount: number) => void;
+  initialStandardCount?: number;
+  initialOversizedCount?: number;
 }
 
 const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
   passengerIndex,
-  onBaggageChange
+  onBaggageChange,
+  initialStandardCount = 0,
+  initialOversizedCount = 0
 }) => {
-  const [standardCount, setStandardCount] = React.useState(0);
-  const [oversizedCount, setOversizedCount] = React.useState(0);
+  const [standardCount, setStandardCount] = React.useState(initialStandardCount);
+  const [oversizedCount, setOversizedCount] = React.useState(initialOversizedCount);
+
+  // Update when initial counts change (when switching passengers)
+  React.useEffect(() => {
+    setStandardCount(initialStandardCount);
+    setOversizedCount(initialOversizedCount);
+  }, [initialStandardCount, initialOversizedCount, passengerIndex]);
 
   const handleStandardIncrement = () => {
     if (standardCount < 3) {
@@ -71,7 +81,6 @@ const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
 
       <article className="flex relative flex-col self-stretch px-5 pt-1.5 pb-4 w-full rounded-2xl border border-solid border-gray border-opacity-20 max-md:pr-5 max-md:max-w-full">
         <div className="flex flex-wrap gap-2 items-start self-start text-l text-black">
-
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="41" viewBox="0 0 40 41" fill="none">
           <g clipPath="url(#clip0_374_1834)">
             <path d="M5 4.41699C5 4.08547 5.1317 3.76753 5.36612 3.53311C5.60054 3.29869 5.91848 3.16699 6.25 3.16699H13.75C14.0815 3.16699 14.3995 3.29869 14.6339 3.53311C14.8683 3.76753 15 4.08547 15 4.41699V13.167H16.25C17.2446 13.167 18.1984 13.5621 18.9017 14.2653C19.6049 14.9686 20 15.9224 20 16.917V18.167H17.5V16.917C17.5 16.5855 17.3683 16.2675 17.1339 16.0331C16.8995 15.7987 16.5815 15.667 16.25 15.667H3.75C3.41848 15.667 3.10054 15.7987 2.86612 16.0331C2.6317 16.2675 2.5 16.5855 2.5 16.917V34.417C2.5 34.7485 2.6317 35.0665 2.86612 35.3009C3.10054 35.5353 3.41848 35.667 3.75 35.667H10V38.167H6.25V38.792C6.25 39.2893 6.05246 39.7662 5.70083 40.1178C5.3492 40.4694 4.87228 40.667 4.375 40.667C3.87772 40.667 3.40081 40.4694 3.04918 40.1178C2.69754 39.7662 2.5 39.2893 2.5 38.792V37.9545C1.76856 37.6959 1.13532 37.2168 0.687571 36.5832C0.23982 35.9496 -0.0004062 35.1928 5.15592e-07 34.417V16.917C5.15592e-07 15.9224 0.395089 14.9686 1.09835 14.2653C1.80161 13.5621 2.75544 13.167 3.75 13.167H5V4.41699ZM7.5 13.167H12.5V5.66699H7.5V13.167Z" fill="#050C9C"/>
@@ -83,7 +92,6 @@ const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
             </clipPath>
           </defs>
         </svg>
-
 
           <h4 className="flex-auto mt-4 max-md:max-w-full">
             Oversized/Overweight Bag (32kg - max 2 bags)
