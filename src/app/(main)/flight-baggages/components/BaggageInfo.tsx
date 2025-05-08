@@ -36,10 +36,6 @@ const BaggageInfo = () => {
           Oversized/Overweight Bag (32kg): $50 each
         </p>
       </div>
-
-      <h3 className="relative mt-20 text-xl font-semibold text-black max-md:mt-10 max-md:ml-1.5">
-        Add checked baggage
-      </h3>
     </section>
   );
 };
