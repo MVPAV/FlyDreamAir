@@ -4,16 +4,40 @@ import { useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import PrimaryButton from "src/app/auth/components/PrimaryButton";
+import {login, signUp} from "src/services/auth"
+import {useRouter} from "next/navigation"
 
 
 const SignupForm = () => {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!email || !password) {
+            setError("Email and Password are required");
+            return;
+        }
+
+        try {
+            const res = await signUp(email, password);
+
+            if (res.message === "Signup successful") {
+                alert("Signup successful! Please login."); // thông báo nhanh
+                router.push('/auth/login'); // chuyển sang trang login
+            } else {
+                setError(res.message || "Signup failed");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Something went wrong");
+        }
     };
+
 
     return (
         <div className="pt-50 flex justify-center items-center grow bg-white">
