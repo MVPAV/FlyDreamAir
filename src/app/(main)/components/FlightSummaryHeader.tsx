@@ -23,7 +23,7 @@ const FlightSummaryHeader: React.FC<FlightSummaryHeaderProps> = ({
   flightClass
 }) => {
   return (
-    <div className="w-full bg-white shadow-sm border-b border-gray-100 py-6">
+    <div className="w-full bg-white shadow-sm border-b border-gray-100 py-20">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex flex-col space-y-5">
           {/* Route information */}
