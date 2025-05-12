@@ -68,15 +68,17 @@ const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
               Standard Checked Bag (23kg - max 3 bags)
             </h4>
           </div>
-          <p className="self-start mt-2 text-base text-gray-600 max-md:max-w-full">
-            Add standard checked bags for this passenger.
-          </p>
+          <div className="flex flex-wrap gap-5 justify-between w-full max-md:max-w-full">
+            <p className="self-start mt-2 text-base text-gray-600 max-md:max-w-full">
+              Add standard checked bags for this passenger.
+            </p>
+            <BaggageCounter
+              count={standardCount}
+              onIncrement={handleStandardIncrement}
+              onDecrement={handleStandardDecrement}
+            />
+          </div>
         </div>
-        <BaggageCounter
-          count={standardCount}
-          onIncrement={handleStandardIncrement}
-          onDecrement={handleStandardDecrement}
-        />
       </article>
 
       <article className="flex relative flex-col self-stretch px-5 pt-1.5 pb-4 w-full rounded-2xl border border-solid border-gray border-opacity-20 max-md:pr-5 max-md:max-w-full">
