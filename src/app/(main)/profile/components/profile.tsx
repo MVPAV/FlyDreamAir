@@ -9,7 +9,7 @@ export const ProfileInterface = () => {
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow grow">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4 p-5">
         <h2 className="text-xl font-semibold">Welcome, James Smith!</h2>
         <div className="flex gap-4">
           <button className="bg-blue-900 text-white px-5 py-2 rounded hover:bg-blue-800 transition">
