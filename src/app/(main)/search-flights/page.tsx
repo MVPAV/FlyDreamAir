@@ -2,7 +2,7 @@ import FlightSearchResults from "src/app/(main)/search-flights/components/Flight
 
 export default function Booking() {
     return (
-        <div className="pt-18">
+        <div className="pt-20">
             <FlightSearchResults/>
         </div>
     );

@@ -36,8 +36,8 @@ const ForgotPasswordForm = () => {
 
                 <div className="text-right mt-1">
                     Remember your password?{" "}
-                    <Link href="/auth/login" className="text-blue-600 hover:underline">
-                        Back to Login
+                    <Link href="/auth/signin" className="text-blue-600 hover:underline">
+                        Back to Sign in
                     </Link>
                 </div>
 
