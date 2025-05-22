@@ -37,7 +37,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className=" pt-50 flex justify-center items-center grow bg-white">
+        <div className="py-20 flex justify-center items-center grow bg-white">
             <form
                 onSubmit={handleLogin}
                 className="w-full max-w-lg md:max-w-3xl space-y-6 px-6 py-10 shadow-md rounded-md"
