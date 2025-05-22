@@ -1,8 +1,8 @@
-import React from "react";
-import PassengerForm from "src/app/(main)/passenger-details/components/PassengerForm";
+import SeatSelection from "src/app/(main)/seat-selection/components/SeatSelection";
 import FlightSummaryHeader from "src/app/(main)/components/FlightSummaryHeader";
+import React from "react";
 
-export default function passenger_details() {
+export default function SeatSelectionPage() {
     return (
         <div className="pt-20">
             <FlightSummaryHeader
@@ -13,8 +13,7 @@ export default function passenger_details() {
                 passengers={1}
                 flightClass="Economy"
             />
-            <PassengerForm/>
+            <SeatSelection/>
         </div>
     );
 }
-
