@@ -62,8 +62,8 @@ export default function Navbar() {
 
             {/* Buttons */}
             <div className="flex items-center space-x-4">
-                <Link href="/auth/login">
-                    <button className="bg-blue-900 text-white px-6 py-2 rounded-lg font-medium cursor-pointer">Login</button>
+                <Link href="/auth/signin">
+                    <button className="bg-blue-900 text-white px-6 py-2 rounded-lg font-medium cursor-pointer">Sign in</button>
                 </Link>
                 <Link href="/auth/signup">
                 <button className="border border-blue-900 text-blue-900 px-6 py-2 rounded-lg font-medium cursor-pointer">Sign up</button>

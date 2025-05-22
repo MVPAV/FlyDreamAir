@@ -11,10 +11,10 @@ export default function Hero() {
                     service await you.
                 </p>
                 <div className="mt-10 flex justify-center gap-4 flex-wrap">
-                    <Link href="/auth/login">
+                    <Link href="/auth/signin">
                     <button
                         className="bg-white text-black px-6 py-3 rounded-lg text-base font-semibold shadow-md hover:bg-gray-100 transition">
-                        Login
+                        Sign in
                     </button>
                     </Link>
                     <Link href="/home">

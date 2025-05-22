@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  password      String
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+model Flights {
+  id             String   @id @default(cuid())
+  flightNumber   String   @unique
+  departureTime  DateTime
+  arrivalTime    DateTime
+  duration       Int
+  price          Float
+  seatsAvailable Int
+
+  departureId   String
+  destinationId String
+  airlineId     String
+
+  departure   Airports   @relation("DepartureAirport", fields: [departureId], references: [id])
+  destination Airports   @relation("DestinationAirport", fields: [destinationId], references: [id])
+  airline     Airlines   @relation(fields: [airlineId], references: [id])
+  bookings    Bookings[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Airports {
+  id      String @id @default(cuid())
+  code    String @unique
+  name    String
+  city    String
+  country String
+
+  departures Flights[] @relation("DepartureAirport")
+  arrivals   Flights[] @relation("DestinationAirport")
+}
+
+model Airlines {
+  id   String @id @default(cuid())
+  name String
+  code String @unique
+
+  flights Flights[]
+}
+
+model Passengers {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  passport String
+
+  bookings Bookings[]
+}
+
+model Bookings {
+  id          String   @id @default(cuid())
+  flightId    String
+  passengerId String
+  seatNumber  String
+  status      String
+  bookedAt    DateTime @default(now())
+
+  flight    Flights    @relation(fields: [flightId], references: [id])
+  passenger Passengers @relation(fields: [passengerId], references: [id])
+}
