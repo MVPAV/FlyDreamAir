@@ -3,46 +3,49 @@
 import {useState} from "react";
 import Link from "next/link";
 import {Eye, EyeOff} from "lucide-react";
-import PrimaryButton from "src/app/auth/components/PrimaryButton";
-import {useRouter} from "next/navigation"
+import {useRouter} from "next/navigation";
 import {signIn} from "next-auth/react";
 
-const SignupForm = () => {
+const SigninForm = () => {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
-    const handleSignup = async (e: React.FormEvent) => {
+    const handleSignin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+        if (!email || !password) {
+            setError("Email and password are required");
+            return;
+        }
 
-            console.log("Registration Successful", response);
-        } catch (error: any) {
-            console.error("Registration Failed:", error);
+        try {
+            const result = await signIn("credentials", {
+                redirect: false,
+                email,
+                password,
+            });
+
+            if (result?.ok) {
+                router.push("/home");
+            } else {
+                setError("Invalid email or password");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Something went wrong");
         }
     };
-
 
     return (
         <div className="py-20 flex justify-center items-center grow bg-white">
             <form
-                onSubmit={handleSignup}
+                onSubmit={handleSignin}
                 className="w-full max-w-lg md:max-w-3xl space-y-6 px-6 py-10 shadow-md rounded-md"
             >
-                <h2 className="text-2xl font-bold text-gray-900">Create an account</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Signin to your account</h2>
 
                 <div>
                     <label className="block text-lg font-medium text-gray-700 mb-1" htmlFor="email">
@@ -82,24 +85,24 @@ const SignupForm = () => {
                             {showPassword ? <Eye className="w-5 h-5"/> : <EyeOff className="w-5 h-5"/>}
                         </button>
                     </div>
+                    <div className="text-right mt-1">
+                        <Link href="/auth/forgot_password" className="text-medium text-blue-600 hover:underline">
+                            Forgot Password ?
+                        </Link>
+                    </div>
                 </div>
 
-                <PrimaryButton type="submit">Create account</PrimaryButton>
-
                 <button
-                    className="text-lg w-full bg-blue-100 text-gray-800 py-2 rounded-md font-medium flex items-center justify-center gap-2 hover:bg-blue-200 transition">
-                    <img
-                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                        alt="Google"
-                        className="w-5 h-5"
-                    />
-                    Continue with Google
+                    type="submit"
+                    className="text-lg w-full bg-[#000057] text-white py-2 rounded-md font-semibold hover:bg-blue-900"
+                >
+                    Sign in now
                 </button>
 
-                <p className="text-center text-lg text-gray-600">
-                    Already Have An Account ?{" "}
-                    <Link href="/auth/signin" className="text-blue-600 hover:underline">
-                        Log In
+                <p className="text-center text-sm text-gray-600">
+                    Don't Have An Account?{" "}
+                    <Link href="/auth/signup" className="text-blue-600 hover:underline">
+                        Sign Up
                     </Link>
                 </p>
             </form>
@@ -107,4 +110,4 @@ const SignupForm = () => {
     );
 };
 
-export default SignupForm;
+export default SigninForm;

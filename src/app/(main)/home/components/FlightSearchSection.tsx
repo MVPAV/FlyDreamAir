@@ -78,7 +78,7 @@ export default function FlightSearchSection() {
                             {/* Location fields */}
                             <div className="grid grid-cols-2 gap-4">
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option value="" disabled selected >From</option>
+                                    <option value="" disabled>From</option>
                                     <option value="syd">Sydney</option>
                                     <option value="mel">Melbourne</option>
                                     <option value="bri">Brisbane</option>
@@ -86,7 +86,7 @@ export default function FlightSearchSection() {
                                     <option value="ade">Adelaide</option>
                                 </select>
                                 <select className="w-full p-3 rounded-md border border-gray-300 text-sm">
-                                    <option value="" disabled selected >To</option>
+                                    <option value="" disabled>To</option>
                                     <option value="syd">Sydney</option>
                                     <option value="mel">Melbourne</option>
                                     <option value="bri">Brisbane</option>
