@@ -134,8 +134,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                         maxLength={3}
                         className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
                     />
+                    <ErrorMsg field="cvv"/>
                 </div>
-                <ErrorMsg field="cvv"/>
             </div>
 
             {/* Billing Address */}
