@@ -44,5 +44,6 @@ export interface ClientBooking {
     passengers: ClientPassenger[];
     flightClass: string;
     passengerCount: number;
+    totalPrice: number;
 }
 
