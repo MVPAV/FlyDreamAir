@@ -10,11 +10,37 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit();
-  };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const newErrors = {
+            cardNumber: cardNumber.trim() === '',
+            cardholderName: cardholderName.trim() === '',
+            expiryDate: expiryDate.trim() === '',
+            cvv: cvv.trim() === '',
+            billingAddress: billingAddress.trim() === '',
+        };
+        setErrors(newErrors);
+
+        const hasError = Object.values(newErrors).some(e => e);
+        if (!hasError) {
+            console.log('Submitting payment...');
+            onSubmit();
+        }
+    };
+
+    const inputClass = (field: string) =>
+        `w-full border text-black text-sm px-4 py-2.5 rounded-md ${
+            errors[field] ? 'border-red-500' : 'border-black/20'
+        }`;
+
+    const ErrorMsg = ({ field }: { field: string }) =>
+        errors[field] ? (
+            <p className="text-sm text-red-600 mt-1">
+                {field.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())} is required
+            </p>
+        ) : null;
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
@@ -64,6 +90,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
               className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
               required
           />
+            <ErrorMsg field="cardNumber" />
         </div>
 
         {/* Cardholder Name */}
@@ -78,6 +105,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
               className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
               required
           />
+            <ErrorMsg field="cardholderName" />
         </div>
 
         {/* Expiry Date and CVV */}
@@ -94,6 +122,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
                 className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
                 required
             />
+              <ErrorMsg field="expiryDate" />
           </div>
 
           <div className="flex-1">
@@ -109,6 +138,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
                 required
             />
           </div>
+            <ErrorMsg field="cvv"/>
         </div>
 
         {/* Billing Address */}
@@ -123,6 +153,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
               className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
               required
           />
+            <ErrorMsg field="billingAddress" />
         </div>
 
         {/* Secure Notice */}
