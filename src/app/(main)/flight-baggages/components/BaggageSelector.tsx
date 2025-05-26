@@ -67,7 +67,7 @@ const BaggageSelector: React.FC = () => {
 
     return (
         <section className="w-full mt-4">
-            <div className="border-flydream-primary pl-2 py-2 mb-6">
+            <div className="border-flydream-primary py-2 mb-6">
                 <h3 className="text-xl font-medium">Select Baggage for Each Passenger</h3>
             </div>
 
@@ -78,7 +78,7 @@ const BaggageSelector: React.FC = () => {
                 const ovReturn = returnSegmentId ? countType(index, returnSegmentId, oversized.id) : 0;
 
                 return (
-                    <div key={index} className="mb-10 border-b pb-6">
+                    <div key={index} className="mb-4">
                         <h4 className="text-lg font-semibold mb-4">
                             Passenger {index + 1}: {passenger.firstName} {passenger.lastName}
                         </h4>
