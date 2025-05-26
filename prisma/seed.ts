@@ -1,123 +1,207 @@
-import {PrismaClient} from '@prisma/client';
-import {addDays, addHours} from 'date-fns';
+import {FareClass, PrismaClient} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-    // Airports
-    const [syd, mel, bne, adl] = await prisma.$transaction([
-        prisma.airports.create({data: {code: 'SYD', name: 'Sydney Airport', city: 'Sydney', country: 'Australia'}}),
-        prisma.airports.create({
-            data: {
-                code: 'MEL',
-                name: 'Melbourne Airport',
-                city: 'Melbourne',
-                country: 'Australia'
-            }
-        }),
-        prisma.airports.create({data: {code: 'BNE', name: 'Brisbane Airport', city: 'Brisbane', country: 'Australia'}}),
-        prisma.airports.create({data: {code: 'ADL', name: 'Adelaide Airport', city: 'Adelaide', country: 'Australia'}})
-    ]);
-
-    // Airlines
-    const [qantas, jetstar] = await prisma.$transaction([
-        prisma.airlines.create({data: {name: 'Qantas Airways', code: 'QF'}}),
-        prisma.airlines.create({data: {name: 'Jetstar', code: 'JQ'}})
-    ]);
-
-    // Flights
-    const baseDate = new Date('2025-07-01T08:00:00Z');
-
-    const flights = await prisma.$transaction([
-        prisma.flights.create({
-            data: {
-                flightNumber: 'QF400',
-                departureTime: baseDate,
-                arrivalTime: addHours(baseDate, 2),
-                duration: 120,
-                price: 149.99,
-                seatsAvailable: 180,
-                departureId: syd.id,
-                destinationId: mel.id,
-                airlineId: qantas.id
-            }
-        }),
-        prisma.flights.create({
-            data: {
-                flightNumber: 'JQ802',
-                departureTime: addDays(baseDate, 1),
-                arrivalTime: addDays(addHours(baseDate, 3), 1),
-                duration: 180,
-                price: 99.99,
-                seatsAvailable: 150,
-                departureId: mel.id,
-                destinationId: bne.id,
-                airlineId: jetstar.id
-            }
-        }),
-        prisma.flights.create({
-            data: {
-                flightNumber: 'QF112',
-                departureTime: addDays(baseDate, 2),
-                arrivalTime: addDays(addHours(baseDate, 2), 2),
-                duration: 120,
-                price: 129.99,
-                seatsAvailable: 160,
-                departureId: bne.id,
-                destinationId: adl.id,
-                airlineId: qantas.id
-            }
-        })
-    ]);
-
-    // Passengers
-    const passengers = await prisma.$transaction([
-        prisma.passengers.create({data: {name: 'Alice Brown', email: 'alice@example.com', passport: 'P0001112'}}),
-        prisma.passengers.create({data: {name: 'Bob Stone', email: 'bob@example.com', passport: 'P0002223'}}),
-        prisma.passengers.create({data: {name: 'Clara Chen', email: 'clara@example.com', passport: 'P0003334'}}),
-        prisma.passengers.create({data: {name: 'David Kim', email: 'david@example.com', passport: 'P0004445'}})
-    ]);
-
-    // Bookings
-    await prisma.bookings.createMany({
-        data: [
-            {
-                flightId: flights[0].id,
-                passengerId: passengers[0].id,
-                seatNumber: 'A1',
-                status: 'Confirmed',
-                bookedAt: new Date()
-            },
-            {
-                flightId: flights[0].id,
-                passengerId: passengers[1].id,
-                seatNumber: 'B1',
-                status: 'Confirmed',
-                bookedAt: new Date()
-            },
-            {
-                flightId: flights[1].id,
-                passengerId: passengers[2].id,
-                seatNumber: 'C2',
-                status: 'Confirmed',
-                bookedAt: new Date()
-            },
-            {
-                flightId: flights[2].id,
-                passengerId: passengers[3].id,
-                seatNumber: 'D3',
-                status: 'Confirmed',
-                bookedAt: new Date()
-            }
-        ]
+    // Seed airline
+    const qantas = await prisma.airline.upsert({
+        where: {code: 'QF'},
+        update: {},
+        create: {
+            id: 'qf-id',
+            name: 'Qantas Airways',
+            code: 'QF',
+        },
     });
 
-    console.log('🚀 Sample data inserted successfully');
+    // Seed Australian airports
+    const airportMap: Record<string, string> = {};
+    const airports = [
+        {code: 'SYD', name: 'Sydney Kingsford Smith Airport', city: 'Sydney'},
+        {code: 'MEL', name: 'Melbourne Airport', city: 'Melbourne'},
+        {code: 'BNE', name: 'Brisbane Airport', city: 'Brisbane'},
+        {code: 'PER', name: 'Perth Airport', city: 'Perth'},
+    ];
+
+    for (const airport of airports) {
+        const result = await prisma.airport.upsert({
+            where: {code: airport.code},
+            update: {},
+            create: {
+                id: `${airport.code.toLowerCase()}-id`,
+                code: airport.code,
+                name: airport.name,
+                city: airport.city,
+                country: 'Australia',
+            },
+        });
+        airportMap[airport.code] = result.id;
+    }
+
+    // Flight segments
+    const flightSegments = [
+        {
+            flightNumber: 'QF401',
+            from: 'SYD',
+            to: 'MEL',
+            departure: new Date('2025-12-22T08:00:00+10:00'),
+            arrival: new Date('2025-12-22T09:35:00+10:00'),
+            seatCapacity: 180,
+            fareClass: 'ECONOMY',
+        },
+        {
+            flightNumber: 'QF402',
+            from: 'MEL',
+            to: 'SYD',
+            departure: new Date('2025-12-22T18:00:00+10:00'),
+            arrival: new Date('2025-12-22T19:40:00+10:00'),
+            seatCapacity: 180,
+            fareClass: 'ECONOMY',
+        },
+        {
+            flightNumber: 'QF700',
+            from: 'BNE',
+            to: 'PER',
+            departure: new Date('2025-07-02T07:00:00+10:00'),
+            arrival: new Date('2025-07-02T12:10:00+08:00'),
+            seatCapacity: 220,
+            fareClass: 'BUSINESS',
+        },
+    ];
+
+    for (const flight of flightSegments) {
+        const segment = await prisma.flightSegment.upsert({
+            where: {flightNumber: flight.flightNumber},
+            update: {},
+            create: {
+                flightNumber: flight.flightNumber,
+                departureTime: flight.departure,
+                arrivalTime: flight.arrival,
+                seatCapacity: flight.seatCapacity,
+                fareClass: flight.fareClass as FareClass,
+                airlineId: qantas.id,
+                departureAirportId: airportMap[flight.from],
+                arrivalAirportId: airportMap[flight.to],
+            },
+        });
+
+        // Add 2 fare options per segment
+        await prisma.fare.createMany({
+            data: [
+                {
+                    flightSegmentId: segment.id,
+                    fareClass: 'ECONOMY',
+                    price: 150,
+                    refundable: false,
+                    baggageIncluded: 20,
+                    validUntil: new Date('2025-06-30T23:59:59+10:00'),
+                },
+                {
+                    flightSegmentId: segment.id,
+                    fareClass: 'BUSINESS',
+                    price: 420,
+                    refundable: true,
+                    baggageIncluded: 30,
+                    validUntil: new Date('2025-06-30T23:59:59+10:00'),
+                },
+            ],
+        });
+    }
+
+    await prisma.baggageType.createMany({
+        data: [
+            {
+                id: 'standard-id',
+                name: 'Standard',
+                maxWeight: 20,
+                price: 30,
+            },
+            {
+                id: 'oversized-id',
+                name: 'Oversized',
+                maxWeight: 32,
+                price: 50,
+            },
+            {
+                name: 'Cabin',
+                maxWeight: 7,
+                price: 0,
+            },
+        ],
+        skipDuplicates: true,
+    });
+
+    // Seed Meal Types
+    await prisma.mealType.createMany({
+        data: [
+            {
+                name: 'Standard',
+                description: 'Regular meal with meat and vegetables.',
+                price: 0,
+            },
+            {
+                name: 'Vegetarian',
+                description: 'Meat-free meal with dairy and vegetables.',
+                price: 5,
+            },
+            {
+                name: 'Vegan',
+                description: 'No meat, dairy, or animal products.',
+                price: 7,
+            },
+            {
+                name: 'Halal',
+                description: 'Prepared in accordance with Islamic dietary laws.',
+                price: 6,
+            },
+            {
+                name: 'Kosher',
+                description: 'Prepared in accordance with Jewish dietary laws.',
+                price: 6,
+            },
+        ],
+        skipDuplicates: true,
+    });
+
+    const getSeatType = (col: string): 'WINDOW' | 'AISLE' | 'MIDDLE' => {
+        if (['A', 'F'].includes(col)) return 'WINDOW';
+        if (['C', 'D'].includes(col)) return 'AISLE';
+        return 'MIDDLE';
+    };
+
+    const columns = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const rows = Array.from({length: 10}, (_, i) => i + 1); // rows 1–10
+
+    async function createSeatsForSegment(segmentId: string) {
+        const seats = rows.flatMap(row =>
+            columns.map(col => {
+                const seatNumber = `${row}${col}`;
+                const seatType = getSeatType(col);
+                const isPremium = row <= 3;
+                return {
+                    seatNumber,
+                    seatType,
+                    isAvailable: true,
+                    price: isPremium ? 40 : 10,
+                    segmentId,
+                };
+            })
+        );
+
+        await prisma.seat.createMany({data: seats});
+    }
+
+    const segment = await prisma.flightSegment.findFirst({
+        where: {flightNumber: 'QF401'},
+    });
+
+    if (segment) {
+        await createSeatsForSegment(segment.id);
+    }
+
+    console.log('✅ Seeded');
 }
 
 main()
-    .catch((e) => {
-        console.error('❌ Seed error:', e);
-        process.exit(1);
-    })
+    .catch(console.error)
     .finally(() => prisma.$disconnect());
