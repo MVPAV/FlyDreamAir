@@ -37,117 +37,112 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
   // Format expiry date as MM/YY
   const formatExpiryDate = (value: string) => {
     const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    
+
     if (v.length >= 2) {
       return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
     }
-    
+
     return v;
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-black text-2xl mt-[27px] mb-[26px]">
-        Payment Information
-      </h2>
-      
-      <div className="mb-4">
-        <label htmlFor="cardNumber" className="text-black block mb-[13px]">
-          Card Number
-        </label>
-        <input
-          id="cardNumber"
-          type="text"
-          value={cardNumber}
-          onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-          placeholder="Enter card number"
-          maxLength={19}
-          className="border w-[833px] max-w-full text-black px-[31px] py-3.5 rounded-[10px] border-[rgba(0,0,0,0.2)] border-solid max-md:px-5"
-          required
-        />
-      </div>
-      
-      <div className="mb-4">
-        <label htmlFor="cardholderName" className="text-black block mb-[13px]">
-          Cardholder Name
-        </label>
-        <input
-          id="cardholderName"
-          type="text"
-          value={cardholderName}
-          onChange={(e) => setCardholderName(e.target.value)}
-          className="border w-[833px] max-w-full h-[51px] px-[31px] py-3.5 rounded-[10px] border-[rgba(0,0,0,0.2)] border-solid max-md:px-5"
-          required
-        />
-      </div>
-      
-      <div className="flex w-[636px] max-w-full items-stretch gap-[40px_100px] flex-wrap mb-4">
-        <div className="flex flex-col items-stretch flex-1">
-          <label htmlFor="expiryDate" className="text-black block mb-[13px]">
-            Expiry Date
-          </label>
+      <form onSubmit={handleSubmit} className="px-4 sm:px-6 md:px-8 lg:px-0 max-w-[900px] mx-auto">
+        <h2 className="text-black text-lg font-semibold mt-8 mb-6 text-center">
+          Payment Information
+        </h2>
+
+        {/* Card Number */}
+        <div className="mb-4">
+          <label htmlFor="cardNumber" className="block text-black text-sm mb-2">Card Number</label>
           <input
-            id="expiryDate"
-            type="text"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
-            placeholder="MM/YY"
-            maxLength={5}
-            className="border text-black whitespace-nowrap px-[22px] py-3.5 rounded-[10px] border-[rgba(0,0,0,0.2)] border-solid max-md:px-5"
-            required
+              id="cardNumber"
+              type="text"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+              placeholder="Enter card number"
+              maxLength={19}
+              className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+              required
           />
         </div>
-        
-        <div className="flex flex-col items-stretch whitespace-nowrap flex-1">
-          <label htmlFor="cvv" className="text-black block mb-[13px]">
-            CVV
-          </label>
+
+        {/* Cardholder Name */}
+        <div className="mb-4">
+          <label htmlFor="cardholderName" className="block text-black text-sm mb-2">Cardholder Name</label>
           <input
-            id="cvv"
-            type="text"
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
-            maxLength={3}
-            className="border text-black px-[22px] py-3.5 rounded-[10px] border-[rgba(0,0,0,0.2)] border-solid max-md:px-5"
-            required
+              id="cardholderName"
+              type="text"
+              value={cardholderName}
+              onChange={(e) => setCardholderName(e.target.value)}
+              className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+              required
           />
         </div>
-      </div>
-      
-      <div className="mb-4">
-        <label htmlFor="billingAddress" className="text-black block mb-[13px]">
-          Billing Address
-        </label>
-        <input
-          id="billingAddress"
-          type="text"
-          value={billingAddress}
-          onChange={(e) => setBillingAddress(e.target.value)}
-          className="border w-[833px] max-w-full text-black px-[21px] py-3.5 rounded-[10px] border-[rgba(0,0,0,0.2)] border-solid max-md:px-5"
-          required
-        />
-      </div>
-      
-      <div className="bg-[rgba(238,243,251,1)] border flex items-stretch gap-[7px] text-base text-black font-normal flex-wrap ml-2.5 mt-[39px] p-[13px] rounded-[10px] border-[rgba(0,0,0,0.1)] border-solid">
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/c6873386ec4a4d6982ab9f318cb7a156/3d50ac038c359d242ba8916f5f75acd35a71dccc?placeholderIfAbsent=true"
-          alt="Secure"
-          className="aspect-[1] object-contain w-[25px] shrink-0"
-        />
-        <div className="basis-auto grow shrink max-md:max-w-full">
-          Secure payment processing
-          <br />
-          Your payment information is encrypted and secure.
+
+        {/* Expiry Date and CVV */}
+        <div className="flex flex-col md:flex-row gap-4 md:gap-x-8 mb-4">
+          <div className="flex-1">
+            <label htmlFor="expiryDate" className="block text-black text-sm mb-2">Expiry Date</label>
+            <input
+                id="expiryDate"
+                type="text"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
+                placeholder="MM/YY"
+                maxLength={5}
+                className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                required
+            />
+          </div>
+
+          <div className="flex-1">
+            <label htmlFor="cvv" className="block text-black text-sm mb-2">CVV</label>
+            <input
+                id="cvv"
+                type="text"
+                value={cvv}
+                onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
+                maxLength={3}
+                className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                required
+            />
+          </div>
         </div>
-      </div>
-      
-      <button
-        type="submit"
-        className="bg-[rgba(5,12,156,1)] block mx-auto w-[396px] max-w-full text-2xl text-white text-center mt-[58px] px-[70px] py-[19px] rounded-[10px] border-[rgba(0,0,0,0.2)] border-r border-l max-md:mt-10 max-md:px-5"
-      >
-        Complete Payment
-      </button>
-    </form>
+
+        {/* Billing Address */}
+        <div className="mb-4">
+          <label htmlFor="billingAddress" className="block text-black text-sm mb-2">Billing Address</label>
+          <input
+              id="billingAddress"
+              type="text"
+              value={billingAddress}
+              onChange={(e) => setBillingAddress(e.target.value)}
+              className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+              required
+          />
+        </div>
+
+        {/* Secure Notice */}
+        <div className="flex items-start gap-3 bg-[#eef3fb] border border-black/10 p-3 rounded-md mt-6 text-sm text-black">
+          <img
+              src="https://cdn.builder.io/api/v1/image/assets/c6873386ec4a4d6982ab9f318cb7a156/3d50ac038c359d242ba8916f5f75acd35a71dccc?placeholderIfAbsent=true"
+              alt="Secure"
+              className="w-5 h-5"
+          />
+          <div>
+            <p className="font-medium">Secure payment processing</p>
+            <p>Your payment information is encrypted and secure.</p>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+            type="submit"
+            className="bg-blue-900 text-white text-base font-medium text-center w-full max-w-[360px] mt-8 mx-auto px-6 py-3 rounded-md block"
+        >
+          Complete Payment
+        </button>
+      </form>
   );
 };
 

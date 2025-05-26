@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {saltAndHashPassword} from 'src/utils/auth';
-import {createUser} from "src/db/users";
+import {createUser} from "src/server/db/users";
 
 export async function POST(request: Request) {
     try {

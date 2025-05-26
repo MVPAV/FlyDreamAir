@@ -1,105 +1,176 @@
-'use client'
+'use client';
 
-import {useState} from 'react';
-import {FaTicketAlt, FaSearch} from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaTicketAlt, FaSearch } from 'react-icons/fa';
+import { trpc } from 'src/utils/trpc';
+import PassengerTickets from "src/app/(main)/manage-booking/components/PassengerTickets";
 
 export default function ManageBooking() {
-    const [activeTab, setActiveTab] = useState('booking');
+    const [activeTab, setActiveTab] = useState<'booking' | 'email'>('booking');
+    const [bookingCode, setBookingCode] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+
+    const {
+        data: bookingData,
+        refetch,
+        isFetching,
+        error,
+    } = trpc.bookings.findBookingByReference.useQuery(
+        { reference: bookingCode, lastName },
+        { enabled: false }
+    );
+
+    const handleFindBooking = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitted(true);
+        await refetch();
+    };
 
     return (
-        <section className="bg-white pt-24 px-6 text-center">
-            <h2 className="text-4xl font-bold mb-2 text-blue-900">
+        <section className="bg-white pt-24 px-4 sm:px-6 text-center md:text-left">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-blue-900 text-center">
                 Manage Your Booking
             </h2>
-            <p className="pt-6 text-gray-600 text-lg mb-12 max-w-3xl mx-auto">
-                Check in online, change your flight, add extra luggage, select your seats, or purchase additional
-                services.
+            <p className="pt-4 text-gray-600 text-sm sm:text-base mb-10 max-w-3xl mx-auto text-center">
+                Check in online, change your flight, add extra luggage, select your seats, or purchase additional services.
             </p>
 
             {/* Tab Switcher */}
-            <div className="flex max-w-4xl mx-auto rounded-xl overflow-hidden shadow mb-10">
+            <div className="flex flex-col sm:flex-row max-w-2xl mx-auto rounded-xl overflow-hidden shadow mb-10">
                 <button
                     onClick={() => setActiveTab('booking')}
-                    className={`flex items-center justify-center flex-1 py-4 px-8 font-medium text-base ${
-                        activeTab === 'booking'
-                            ? 'bg-white text-blue-900'
-                            : 'bg-gray-200 text-gray-500'
+                    className={`flex items-center justify-center flex-1 py-3 px-6 font-medium text-sm sm:text-base ${
+                        activeTab === 'booking' ? 'bg-white text-blue-900' : 'bg-gray-100 text-gray-500'
                     }`}
                 >
-                    <FaTicketAlt className="mr-2"/>
+                    <FaTicketAlt className="mr-2" />
                     Booking Number
                 </button>
                 <button
                     onClick={() => setActiveTab('email')}
-                    className={`flex items-center justify-center flex-1 py-4 px-8 font-medium text-base ${
-                        activeTab === 'email'
-                            ? 'bg-white text-blue-900'
-                            : 'bg-gray-200 text-gray-500'
+                    className={`flex items-center justify-center flex-1 py-3 px-6 font-medium text-sm sm:text-base ${
+                        activeTab === 'email' ? 'bg-white text-blue-900' : 'bg-gray-100 text-gray-500'
                     }`}
                 >
-                    <FaSearch className="mr-2"/>
+                    <FaSearch className="mr-2" />
                     Email Search
                 </button>
             </div>
 
             {/* Form Container */}
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl p-10 border border-gray-200 shadow-lg text-left">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 sm:p-10 border border-gray-200 shadow text-left text-sm">
                 {activeTab === 'booking' && (
                     <>
-                        <h3 className="text-xl font-semibold mb-2">Find By Booking Reference</h3>
-                        <p className="text-gray-500 mb-8">
+                        <h3 className="text-lg font-semibold mb-1">Find By Booking Reference</h3>
+                        <p className="text-gray-500 mb-6">
                             Enter your booking number and last name to find your booking.
                         </p>
 
-                        <form className="space-y-6">
+                        <form className="space-y-6" onSubmit={handleFindBooking}>
                             <div>
-                                <label className="block text-sm font-medium mb-1">Booking Reference</label>
+                                <label className="block font-medium mb-1">Booking Reference</label>
                                 <input
                                     type="text"
+                                    value={bookingCode}
+                                    onChange={(e) => setBookingCode(e.target.value)}
                                     placeholder="e.g., ABCDEF"
-                                    className="w-full border border-gray-300 rounded-lg p-4 text-sm"
+                                    className="w-full border border-gray-300 rounded-lg p-3"
+                                    required
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1">Last Name</label>
+                                <label className="block font-medium mb-1">Last Name</label>
                                 <input
                                     type="text"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
                                     placeholder="e.g., Smith"
-                                    className="w-full border border-gray-300 rounded-lg p-4 text-sm"
+                                    className="w-full border border-gray-300 rounded-lg p-3"
+                                    required
                                 />
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full bg-blue-800 hover:bg-blue-900 text-white py-4 rounded-lg font-semibold text-base"
+                                className="w-full bg-blue-800 hover:bg-blue-900 text-white py-3 rounded-lg font-semibold"
+                                disabled={isFetching}
                             >
-                                Find My Booking
+                                {isFetching ? 'Searching...' : 'Find My Booking'}
                             </button>
                         </form>
+
+                        {submitted && error && (
+                            <p className="text-red-600 mt-4">Booking not found or error occurred.</p>
+                        )}
+
+                        {bookingData && (
+                            <div className="mt-10 border-t pt-6 space-y-8">
+                                {/* Booking Summary */}
+                                <div>
+                                    <h4 className="text-base font-semibold mb-2">Booking Details</h4>
+                                    <table className="text-sm w-full text-left">
+                                        <tbody>
+                                        <tr>
+                                            <td className="font-medium py-1">Booking Code:</td>
+                                            <td>{bookingData.bookingCode}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-medium py-1">Status:</td>
+                                            <td>{bookingData.status}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-medium py-1">Total Price:</td>
+                                            <td>${bookingData.totalPrice}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="font-medium py-1">Passengers:</td>
+                                            <td>
+                                                {bookingData.passengers
+                                                    .map((p: any) => p.firstName + ' ' + p.lastName)
+                                                    .join(', ')}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Tickets Per Passenger */}
+                                {bookingData.passengers.map((p, i: number) => (
+                                    <PassengerTickets
+                                        key={p.id}
+                                        passengerIndex={i}
+                                        fullName={`${p.firstName} ${p.lastName}`}
+                                        tickets={p.tickets}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </>
                 )}
 
+                {/* Email Search (Non-functional placeholder) */}
                 {activeTab === 'email' && (
                     <>
-                        <h3 className="text-xl font-semibold mb-2">Find By Email</h3>
-                        <p className="text-gray-500 mb-8">
+                        <h3 className="text-lg font-semibold mb-2">Find By Email</h3>
+                        <p className="text-gray-500 mb-6">
                             Enter the email address used during booking to find all your bookings.
                         </p>
 
                         <form className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Email Address</label>
+                                <label className="block font-medium mb-1">Email Address</label>
                                 <input
                                     type="email"
                                     placeholder="e.g., john.smith@example.com"
-                                    className="w-full border border-gray-300 rounded-lg p-4 text-sm"
+                                    className="w-full border border-gray-300 rounded-lg p-3"
                                 />
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full bg-blue-800 hover:bg-blue-900 text-white py-4 rounded-lg font-semibold text-base"
+                                className="w-full bg-blue-800 hover:bg-blue-900 text-white py-3 rounded-lg font-semibold"
                             >
                                 Find My Booking
                             </button>

@@ -9,7 +9,7 @@ interface FlightInformationProps {
 export const FlightInformation = ({
     departureAirport,
     destinationAirport,
-}) => {
+}: FlightInformationProps) => {
     return (
         <div className="flex items-center mb-4">
             <span className="font-regular text-lg">{departureAirport}</span>
