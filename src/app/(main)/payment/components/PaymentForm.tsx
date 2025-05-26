@@ -8,8 +8,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
   const [cardNumber, setCardNumber] = useState("");
   const [cardholderName, setCardholderName] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("123");
-  const [billingAddress, setBillingAddress] = useState("123 Keira St, Wollongong, 2500");
+  const [cvv, setCvv] = useState("");
+  const [billingAddress, setBillingAddress] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +74,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
               type="text"
               value={cardholderName}
               onChange={(e) => setCardholderName(e.target.value)}
+              placeholder="Enter card holder name"
               className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
               required
           />
@@ -102,6 +103,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
                 type="text"
                 value={cvv}
                 onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
+                placeholder="123"
                 maxLength={3}
                 className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
                 required
@@ -117,6 +119,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
               type="text"
               value={billingAddress}
               onChange={(e) => setBillingAddress(e.target.value)}
+              placeholder="Enter Billing Address    "
               className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
               required
           />

@@ -46,18 +46,20 @@ export default function PrimaryModal({
                             className="flex justify-center bg-[#f3f6fb] p-6 rounded-2xl shadow-xl w-3xl"
                         >
                             <div className="w-full">
-                                {children}
-                            </div>
-                            {showCloseButton && (
-                                <div className="flex justify-end space-x-4 mt-4">
-                                    <button
-                                        onClick={handleCloseModal}
-                                        className="text-black font-medium"
-                                    >
-                                        Close
-                                    </button>
+                                <div className="p-4">
+                                    {children}
+                                    {showCloseButton && (
+                                        <div className="mt-4 flex justify-end">
+                                            <button
+                                                onClick={() => setShowModal(false)}
+                                                className="px-4 py-2 text-sm bg-blue-200 hover:bg-gray-300 rounded-md"
+                                            >
+                                                Close
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </>
