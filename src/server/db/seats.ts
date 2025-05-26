@@ -1,4 +1,4 @@
-import {prisma} from 'src/db/prisma';
+import {prisma} from 'src/server/db/prisma';
 
 export async function getSeatsBySegment(segmentId: string) {
     const seats = await prisma.seat.findMany({

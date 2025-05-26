@@ -1,4 +1,4 @@
-import {prisma} from 'src/db/prisma';
+import {prisma} from 'src/server/db/prisma';
 
 export async function getMealTypes() {
     const mealTypes = await prisma.mealType.findMany({

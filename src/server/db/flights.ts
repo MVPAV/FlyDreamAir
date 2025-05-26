@@ -1,4 +1,4 @@
-import {prisma} from 'src/db/prisma';
+import {prisma} from 'src/server/db/prisma';
 import {startOfDay, endOfDay} from 'date-fns';
 
 export async function getFlights(from: string, to: string, departureDate: Date) {
