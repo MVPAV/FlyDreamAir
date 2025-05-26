@@ -127,26 +127,20 @@ const FlightSearchResults = () => {
                 passengers={params.passengerCount}
                 flightClass={params.flightClass}
             />
-
-            <div className="p-10 bg-gray-100 min-h-screen">
-                <div className="max-w-7xl mx-auto flex gap-3 mb-6">
+            
+            <div className="p-4 sm:p-10 bg-gray-100 min-h-screen">
+                {/* Filters */}
+                <div className="max-w-7xl mx-auto flex flex-wrap gap-3 mb-6 justify-center sm:justify-start">
                     <button className="bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold">Price</button>
                     <button className="bg-white border px-5 py-2 rounded-full text-sm">Departure Time</button>
                     <button className="bg-white border px-5 py-2 rounded-full text-sm">Duration</button>
                 </div>
 
-                {(departureQuery.isLoading || returnQuery.isLoading) && (
-                    <p className="text-center text-sm text-gray-500">Loading flights...</p>
-                )}
-
-                {(departureQuery.isError || returnQuery.isError) && (
-                    <p className="text-center text-red-500">Failed to load flights. Please try again.</p>
-                )}
-
+                {/* Flight results */}
                 <div className="max-w-7xl mx-auto space-y-10">
                     {/* Outbound flights */}
                     <section>
-                        <h2 className="font-semibold text-lg mb-4">
+                        <h2 className="font-semibold text-lg mb-4 text-center sm:text-left">
                             {params.from} to {params.to} - {formatDate(params.departureDate)}
                         </h2>
                         <div className="space-y-4">
@@ -159,7 +153,7 @@ const FlightSearchResults = () => {
                     {/* Return flights */}
                     {params.tripType === 'return' && params.returnDate && returnQuery.data && (
                         <section>
-                            <h2 className="font-semibold text-lg mb-4">
+                            <h2 className="font-semibold text-lg mb-4 text-center sm:text-left">
                                 {params.to} to {params.from} - {formatDate(params.returnDate)}
                             </h2>
                             <div className="space-y-4">
@@ -171,16 +165,17 @@ const FlightSearchResults = () => {
                     )}
                 </div>
 
-                <div className="max-w-7xl mx-auto mt-10 flex justify-between">
+                {/* Navigation buttons */}
+                <div className="max-w-7xl mx-auto mt-10 flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
                     <button
                         onClick={() => router.back()}
-                        className="px-6 py-3 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50"
+                        className="w-full sm:w-auto px-6 py-3 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50"
                     >
                         ← Back
                     </button>
                     <button
                         onClick={() => router.push('/passenger-details')}
-                        className="px-6 py-3 bg-blue-700 text-white rounded-md text-sm font-semibold hover:bg-blue-800"
+                        className="w-full sm:w-auto px-6 py-3 bg-blue-700 text-white rounded-md text-sm font-semibold hover:bg-blue-800"
                     >
                         Continue →
                     </button>

@@ -19,38 +19,44 @@ interface PassengerInfoListProps {
     passengers: Passenger[];
 }
 
-const formatList = (items: string[]) => items.length ? items.join(", ") : "None";
+const formatList = (items: string[]) => (items.length ? items.join(", ") : "None");
 
 const PassengerInfoList: React.FC<PassengerInfoListProps> = ({ passengers }) => {
     return (
-        <section className="mt-7">
-            <h2 className="text-black text-2xl font-semibold mb-[29px]">Passenger Information</h2>
+        <section className="mt-6 px-4 sm:px-6 lg:px-0">
+            <h2 className="text-black text-lg font-semibold mb-5 text-center md:text-left">
+                Passenger Information
+            </h2>
+
             {passengers.map((p, i) => (
                 <div
                     key={i}
-                    className="bg-[rgba(238,243,251,1)] flex w-full gap-5 text-black font-medium flex-wrap justify-between pl-[37px] pr-20 py-[22px] rounded-[15px] mb-6"
+                    className="bg-[#eef3fb] w-full rounded-xl p-4 sm:p-6 mb-6 flex flex-col md:flex-row md:justify-between md:items-start gap-4 text-sm text-black"
                 >
-                    {/* Left column */}
-                    <div className="flex flex-col">
-                        <div className="font-semibold">{p.name}</div>
+                    {/* Departure Column */}
+                    <div className="flex flex-col flex-1">
+                        <div className="font-semibold text-base">{p.name}</div>
                         <div className="mt-2">Email: {p.email}</div>
-                        <div className="mt-2.5">Passport number: {p.passportNumber}</div>
-                        <div className="text-[rgba(5,12,156,1)] mt-3.5">Departure flight:</div>
-                        <div className="mt-2.5">Seat selection: {p.departureInfo.seat}</div>
-                        <div className="mt-2.5">Meal: {formatList(p.departureInfo.meals)}</div>
-                        <div className="mt-2.5">Baggage: {formatList(p.departureInfo.baggages)}</div>
+                        <div className="mt-2">Passport number: {p.passportNumber}</div>
+
+                        <div className="text-blue-900 mt-4 font-medium">Departure flight:</div>
+                        <div className="mt-2">Seat selection: {p.departureInfo.seat}</div>
+                        <div className="mt-1.5">Meal: {formatList(p.departureInfo.meals)}</div>
+                        <div className="mt-1.5">Baggage: {formatList(p.departureInfo.baggages)}</div>
                     </div>
 
-                    {/* Divider + Right column */}
+                    {/* Divider & Return Column */}
                     {p.returnInfo && (
                         <>
-                            <div className="border w-px h-auto mt-[109px] border-[rgba(0,0,0,0.2)]" />
-                            <div className="flex flex-col mt-[33px]">
+                            <div className="hidden md:block w-px bg-black/20 mx-4" />
+
+                            <div className="flex flex-col flex-1 mt-2 md:mt-[2.5rem]">
                                 <div>Phone: {p.phone}</div>
-                                <div className="text-[rgba(0,0,160,1)] mt-[50px]">Return flight:</div>
-                                <div className="mt-2.5">Seat selection: {p.returnInfo.seat}</div>
-                                <div className="mt-2.5">Meal: {formatList(p.returnInfo.meals)}</div>
-                                <div className="mt-2.5">Baggage: {formatList(p.returnInfo.baggages)}</div>
+
+                                <div className="text-blue-800 mt-6 font-medium">Return flight:</div>
+                                <div className="mt-2">Seat selection: {p.returnInfo.seat}</div>
+                                <div className="mt-1.5">Meal: {formatList(p.returnInfo.meals)}</div>
+                                <div className="mt-1.5">Baggage: {formatList(p.returnInfo.baggages)}</div>
                             </div>
                         </>
                     )}
