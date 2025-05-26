@@ -163,7 +163,7 @@ export default function TicketSummary() {
                 flightClass={currentBooking.flightClass}
             />
 
-            <div className="max-w-4xl mx-auto border rounded-md shadow-sm bg-white -mt-6">
+            <div className="max-w-4xl mx-auto rounded-md shadow-sm bg-white ">
                 <h1 className="text-2xl font-bold px-4 sm:px-6 pt-6 pb-2">Booking Summary</h1>
                 <hr className="border-t border-gray-300 mx-4 sm:mx-6 mt-2"/>
                 <h2 className="text-lg font-semibold px-4 sm:px-6 pt-6 pb-2">Passenger Details</h2>
@@ -203,9 +203,11 @@ export default function TicketSummary() {
                 </div>
             </div>
 
-            <div className="mt-4 mb-4 px-6 flex justify-between items-center">
-                <BackButton/>
-                <ProceedButton/>
+            <div className="mt-4 mb-4 pr-48 flex justify-end items-center">
+                <div className="flex mr-48">
+                    <BackButton />
+                    <ProceedButton />
+                </div>
             </div>
         </div>
     );
