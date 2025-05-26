@@ -93,37 +93,43 @@ const SeatSelection = () => {
     const rows = Object.keys(layout).map(Number).sort((a, b) => a - b);
 
     return (
-        <div className="max-w-4xl mx-auto p-4 mt-4">
-            <div className="text-center text-xl font-semibold mb-4">Select Your Seats</div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div className="text-center text-xl sm:text-2xl font-semibold mb-4">Select Your Seats</div>
 
-            <SeatLegend/>
+            <SeatLegend />
 
             {isLoading && <p className="text-center text-gray-500">Loading seat map...</p>}
 
             {seats && passengers.map((p, index) => {
                 const selected = getSelectedSeatId(index);
                 return (
-                    <div key={index} className="mb-6 border p-4 rounded-md bg-white shadow-sm">
-                        <p className="font-medium mb-2">Passenger {index + 1}: {p.firstName} {p.lastName}</p>
+                    <div key={index} className="mb-6 border p-4 sm:p-6 rounded-md bg-white shadow-sm">
+                        <p className="font-medium mb-2 text-sm sm:text-base">
+                            Passenger {index + 1}: {p.firstName} {p.lastName}
+                        </p>
                         <p className="text-sm text-gray-500">
-                            {selected ? `Selected seat: ${seats.find(s => s.id === selected)?.seatNumber}` : 'No seat selected'}
+                            {selected
+                                ? `Selected seat: ${seats.find(s => s.id === selected)?.seatNumber}`
+                                : 'No seat selected'}
                         </p>
 
-                        <div className="w-full flex justify-center mt-4">
-                            <div className="w-full max-w-xl">
+                        <div className="w-full flex justify-center mt-4 overflow-x-auto">
+                            <div className="w-full max-w-full sm:max-w-xl">
                                 <div className="grid grid-cols-7 gap-2 justify-items-center">
                                     {columns.slice(0, 3).map(col => (
                                         <div key={`col-${col}`} className="text-sm font-medium text-center">{col}</div>
                                     ))}
-                                    <div></div>
+                                    <div className="w-4" />
                                     {columns.slice(3).map(col => (
                                         <div key={`col-${col}`} className="text-sm font-medium text-center">{col}</div>
                                     ))}
                                 </div>
 
                                 {rows.map(row => (
-                                    <div key={row}
-                                         className="grid grid-cols-7 gap-2 justify-items-center items-center my-4">
+                                    <div
+                                        key={row}
+                                        className="grid grid-cols-7 gap-2 justify-items-center items-center my-2 sm:my-4"
+                                    >
                                         {columns.slice(0, 3).map(col => {
                                             const seat = layout[row]?.[col];
                                             return seat ? (
@@ -131,17 +137,21 @@ const SeatSelection = () => {
                                                     key={seat.id}
                                                     disabled={!seat.isAvailable}
                                                     onClick={() => handleSeatClick(index, seat.id)}
-                                                    className={`w-10 h-10 rounded shadow-md ${
-                                                        seat.id === selected ? 'bg-blue-800 text-white' :
-                                                            !seat.isAvailable ? 'bg-gray-400 cursor-not-allowed' :
-                                                                seat.price > 10 ? 'bg-yellow-300 hover:bg-yellow-400' :
-                                                                    'bg-blue-200 hover:bg-blue-300'
+                                                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded shadow-md text-xs ${
+                                                        seat.id === selected
+                                                            ? 'bg-blue-800 text-white'
+                                                            : !seat.isAvailable
+                                                                ? 'bg-gray-400 cursor-not-allowed'
+                                                                : seat.price > 10
+                                                                    ? 'bg-yellow-300 hover:bg-yellow-400'
+                                                                    : 'bg-blue-200 hover:bg-blue-300'
                                                     }`}
                                                 />
-                                            ) : <div key={`empty-${row}-${col}`} className="w-10 h-10"/>;
+                                            ) : <div key={`empty-${row}-${col}`} className="w-8 h-8 sm:w-10 sm:h-10" />;
                                         })}
-                                        <div
-                                            className="text-sm text-gray-500 font-semibold w-10 text-center">{row}</div>
+
+                                        <div className="text-xs sm:text-sm text-gray-500 font-semibold w-8 sm:w-10 text-center">{row}</div>
+
                                         {columns.slice(3).map(col => {
                                             const seat = layout[row]?.[col];
                                             return seat ? (
@@ -149,14 +159,17 @@ const SeatSelection = () => {
                                                     key={seat.id}
                                                     disabled={!seat.isAvailable}
                                                     onClick={() => handleSeatClick(index, seat.id)}
-                                                    className={`w-10 h-10 rounded shadow-md ${
-                                                        seat.id === selected ? 'bg-blue-800 text-white' :
-                                                            !seat.isAvailable ? 'bg-gray-400 cursor-not-allowed' :
-                                                                seat.price > 10 ? 'bg-yellow-300 hover:bg-yellow-400' :
-                                                                    'bg-blue-200 hover:bg-blue-300'
+                                                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded shadow-md text-xs ${
+                                                        seat.id === selected
+                                                            ? 'bg-blue-800 text-white'
+                                                            : !seat.isAvailable
+                                                                ? 'bg-gray-400 cursor-not-allowed'
+                                                                : seat.price > 10
+                                                                    ? 'bg-yellow-300 hover:bg-yellow-400'
+                                                                    : 'bg-blue-200 hover:bg-blue-300'
                                                     }`}
                                                 />
-                                            ) : <div key={`empty-${row}-${col}`} className="w-10 h-10"/>;
+                                            ) : <div key={`empty-${row}-${col}`} className="w-8 h-8 sm:w-10 sm:h-10" />;
                                         })}
                                     </div>
                                 ))}
@@ -166,15 +179,19 @@ const SeatSelection = () => {
                 );
             })}
 
-            <div className="flex justify-end gap-2 my-8">
-                <button onClick={() => router.back()} className="bg-white border border-gray-300 px-4 py-2 rounded">
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row justify-end gap-3 my-8">
+                <button
+                    onClick={() => router.back()}
+                    className="w-full sm:w-auto bg-white border border-gray-300 px-6 py-3 rounded shadow hover:bg-gray-100"
+                >
                     Back to Passenger Details
                 </button>
                 <button
                     onClick={() => router.push('/flight-baggages')}
-                    className="bg-blue-800 text-white px-4 py-2 rounded"
+                    className="w-full sm:w-auto bg-blue-800 text-white px-6 py-3 rounded shadow hover:bg-blue-900"
                 >
-                    Next Flight
+                    Select your Baggage
                 </button>
             </div>
         </div>

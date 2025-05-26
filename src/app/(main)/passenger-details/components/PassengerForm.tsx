@@ -26,18 +26,25 @@ const PassengerForm: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-start justify-center p-6">
-            <div className="bg-white rounded-xl shadow-md w-full max-w-6xl p-8">
-                <h1 className="text-3xl font-bold mb-4">Passenger Details</h1>
+        <div className="min-h-screen flex justify-center p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-md w-full max-w-6xl p-4 sm:p-8">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">
+                    Passenger Details
+                </h1>
 
                 <form className="space-y-10" onSubmit={handleSubmit}>
                     {passengers.map((passenger, index) => (
-                        <div key={index} className="space-y-6 border-b pb-6">
-                            <h2 className="text-xl font-semibold">Passenger {index + 1}</h2>
+                        <div
+                            key={index}
+                            className="space-y-6 border-b pb-6 last:border-none last:pb-0"
+                        >
+                            <h2 className="text-lg sm:text-xl font-semibold">
+                                Passenger {index + 1}
+                            </h2>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                 <div>
-                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title:</label>
+                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                                     <select
                                         id="title"
                                         value={passenger.title}
@@ -52,31 +59,31 @@ const PassengerForm: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name:</label>
+                                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                                     <input
                                         type="text"
                                         id="firstName"
                                         value={passenger.firstName}
                                         onChange={(e) => handleChange(index, e)}
-                                        placeholder="First name"
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
+                                        placeholder="First name"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name:</label>
+                                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                                     <input
                                         type="text"
                                         id="lastName"
                                         value={passenger.lastName}
                                         onChange={(e) => handleChange(index, e)}
-                                        placeholder="Last name"
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
+                                        placeholder="Last name"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth:</label>
+                                    <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
                                     <input
                                         type="date"
                                         id="dob"
@@ -87,38 +94,38 @@ const PassengerForm: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                                     <input
                                         type="email"
                                         id="email"
                                         value={passenger.email}
                                         onChange={(e) => handleChange(index, e)}
-                                        placeholder="Email"
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
+                                        placeholder="Email"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone:</label>
+                                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                                     <input
                                         type="tel"
                                         id="phone"
                                         value={passenger.phone}
                                         onChange={(e) => handleChange(index, e)}
-                                        placeholder="Phone"
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
+                                        placeholder="Phone"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="passport" className="block text-sm font-medium text-gray-700 mb-1">Passport Number:</label>
+                                    <label htmlFor="passport" className="block text-sm font-medium text-gray-700 mb-1">Passport Number</label>
                                     <input
                                         type="text"
                                         id="passport"
                                         value={passenger.passport}
                                         onChange={(e) => handleChange(index, e)}
-                                        placeholder="e.g. P12345678"
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
+                                        placeholder="e.g. P12345678"
                                     />
                                 </div>
                             </div>
@@ -137,26 +144,26 @@ const PassengerForm: React.FC = () => {
                         </div>
                     ))}
 
-                    <div className="flex justify-between items-center pt-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pt-6 gap-4">
                         <button
                             type="button"
                             onClick={addPassenger}
-                            className="text-blue-600 hover:underline"
+                            className="text-blue-600 hover:underline text-sm text-left"
                         >
                             + Add another passenger
                         </button>
 
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
                             <button
-                                onClick={() => router.back()}
                                 type="button"
-                                className="bg-white border border-gray-300 px-6 py-3 rounded-md shadow hover:bg-gray-100"
+                                onClick={() => router.back()}
+                                className="w-full sm:w-auto bg-white border border-gray-300 px-6 py-3 rounded-md shadow hover:bg-gray-100"
                             >
                                 Back to Search
                             </button>
                             <button
                                 type="submit"
-                                className="bg-blue-700 text-white px-6 py-3 rounded-md shadow hover:bg-blue-800"
+                                className="w-full sm:w-auto bg-blue-700 text-white px-6 py-3 rounded-md shadow hover:bg-blue-800"
                             >
                                 Continue to Select Your Seats
                             </button>

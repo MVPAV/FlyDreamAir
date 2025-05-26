@@ -11,7 +11,7 @@ import {useSeatStore} from "src/store/seatStore";
 import PassengerInfoList from "src/app/(main)/payment/components/PassengerInfoList";
 import {trpc} from "src/utils/trpc";
 
-export default function Booking() {
+export default function Payment() {
     const {currentBooking} = useBookingStore();
     const passengers = currentBooking.passengers;
     const itinerary = currentBooking.itinerary;
@@ -76,14 +76,18 @@ export default function Booking() {
                 }, 0);
 
 
-            const total = sum + baggages + meals + seats + fare;
-            updateTotalPrice(total);
-            return total;
+            return sum + baggages + meals + seats + fare;
         }, 0);
     };
 
     const passengerSummaries = buildPassengerSummaries();
-    const totalAmount = `${calculateTotal().toFixed(2)} AUD`;
+    const calculatedTotalPrice = calculateTotal();
+    const totalAmount = `${calculatedTotalPrice.toFixed(2)} AUD`;
+
+
+    React.useEffect(() => {
+        updateTotalPrice(calculatedTotalPrice);
+    }, [calculatedTotalPrice, updateTotalPrice]);
 
     const handlePaymentSubmit = () => {
         confirmBooking(
@@ -102,7 +106,7 @@ export default function Booking() {
     };
 
     return (
-        <div className="bg-white flex flex-col overflow-hidden items-stretch">
+        <div className="pt-18 bg-white flex flex-col overflow-hidden items-stretch">
             <FlightSummaryHeader
                 departureCode={itinerary.outbound?.departureAirport.code ?? "SYD"}
                 destinationCode={itinerary.outbound?.arrivalAirport.code ?? "MEL"}
@@ -115,7 +119,7 @@ export default function Booking() {
             <main
                 className="bg-white self-center flex w-full max-w-[1191px] flex-col text-xl font-semibold pt-[34px] pb-[76px] px-[43px] border-[rgba(0,0,0,0.2)] border-r border-l max-md:max-w-full max-md:px-5">
                 <div
-                    className="self-stretch flex items-stretch gap-5 text-[32px] font-bold flex-wrap justify-between max-md:max-w-full">
+                    className="self-stretch flex items-stretch gap-5 text-md font-bold flex-wrap justify-between max-md:max-w-full">
                     <h1 className="text-black">Payment</h1>
                     <div className="text-[rgba(0,0,160,1)] text-center">
                         {totalAmount}

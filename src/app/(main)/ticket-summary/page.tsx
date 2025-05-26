@@ -8,9 +8,10 @@ import {useBookingStore} from 'src/store/bookingStore';
 import {useBaggageTypeStore} from 'src/store/baggageTypeStore';
 import {useMealTypeStore} from 'src/store/mealTypeStore';
 import {useSeatStore} from "src/store/seatStore";
-import BackButton from "src/app/(main)/ticket-summary/components/BackButton";
+import {useRouter} from "next/navigation";
 
 export default function TicketSummary() {
+    const router = useRouter();
     const {currentBooking} = useBookingStore();
     const passengers = currentBooking.passengers;
     const itinerary = currentBooking.itinerary;
@@ -163,10 +164,11 @@ export default function TicketSummary() {
                 flightClass={currentBooking.flightClass}
             />
 
-            <div className="max-w-4xl mx-auto rounded-md shadow-sm bg-white ">
-                <h1 className="text-2xl font-bold px-4 sm:px-6 pt-6 pb-2">Booking Summary</h1>
-                <hr className="border-t border-gray-300 mx-4 sm:mx-6 mt-2"/>
-                <h2 className="text-lg font-semibold px-4 sm:px-6 pt-6 pb-2">Passenger Details</h2>
+            <div className="max-w-4xl mx-auto border rounded-md shadow-sm bg-white -mt-6 px-4 sm:px-6">
+                <h1 className="text-2xl font-bold pt-6 pb-2">Booking Summary</h1>
+                <hr className="border-t border-gray-300 mt-2"/>
+
+                <h2 className="text-lg font-semibold pt-6 pb-2">Passenger Details</h2>
 
                 {passengers.map((_, i) => {
                     const p = buildPassengerDetails(i);
@@ -197,17 +199,26 @@ export default function TicketSummary() {
                     <BookingSummary data={bookingData}/>
                 </div>
 
-                <div className="flex justify-between px-4 sm:px-6 pb-6 text-base font-semibold">
-                    <span className="ml-6">Total:</span>
-                    <span className="text-blue-700 mr-2">${total}</span>
+                <div className="flex justify-between pb-6 text-base font-semibold">
+                    <span>Total:</span>
+                    <span className="text-blue-700">${total}</span>
                 </div>
             </div>
 
-            <div className="mt-4 mb-4 pr-48 flex justify-end items-center">
-                <div className="flex mr-48">
-                    <BackButton />
-                    <ProceedButton />
-                </div>
+            {/* Responsive Button Row */}
+            <div className="mt-6 mb-8 px-4 sm:px-6 max-w-4xl mx-auto flex flex-col sm:flex-row justify-between gap-4">
+                <button
+                    onClick={() => router.back()}
+                    className="bg-white text-black py-3 px-6 rounded-md font-semibold w-full sm:w-auto border border-gray-300 hover:bg-gray-100 transition"
+                >
+                    Return
+                </button>
+                <button
+                    onClick={() => router.push("/payment")}
+                    className="bg-blue-800 hover:bg-blue-900 text-white py-3 px-6 rounded-md font-semibold w-full sm:w-auto"
+                >
+                    Proceed to Payment
+                </button>
             </div>
         </div>
     );
