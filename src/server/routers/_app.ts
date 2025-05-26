@@ -5,6 +5,7 @@ import {seatsRouter} from "src/server/routers/seats";
 import {baggagesRouter} from "src/server/routers/baggages";
 import {mealsRouter} from "src/server/routers/meals";
 import {bookingsRouter} from "src/server/routers/bookings";
+import {adminRouter} from "src/server/routers/admin";
 
 export const appRouter = router({
     example: exampleRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
     baggages: baggagesRouter,
     meals: mealsRouter,
     bookings: bookingsRouter,
+    admin: adminRouter
 });
 
 export type AppRouter = typeof appRouter;
