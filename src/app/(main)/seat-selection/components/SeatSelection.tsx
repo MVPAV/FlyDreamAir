@@ -166,7 +166,7 @@ const SeatSelection = () => {
                 );
             })}
 
-            <div className="flex justify-between my-8">
+            <div className="flex justify-end gap-2 my-8">
                 <button onClick={() => router.back()} className="bg-white border border-gray-300 px-4 py-2 rounded">
                     Back to Passenger Details
                 </button>
