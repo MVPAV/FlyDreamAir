@@ -1,66 +1,187 @@
-import FlightCard from "./FlightCard";
+'use client';
+
+import { useQueryStates } from 'nuqs';
+import { parseAsString, parseAsInteger } from 'nuqs';
+import { format } from 'date-fns';
+import { trpc } from 'src/utils/trpc';
+import FlightCard from './FlightCard';
+import FlightSummaryHeader from 'src/app/(main)/components/FlightSummaryHeader';
+import { useRouter } from 'next/navigation';
+import { useBookingStore } from 'src/store/bookingStore';
+import { useEffect } from 'react';
+
+const calculateDuration = (departure: Date, arrival: Date) => {
+    const diff = (new Date(arrival).getTime() - new Date(departure).getTime()) / 60000;
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
+    return `${hours}h ${minutes}m`;
+};
+
+const getLowestFare = (fares: { price: number }[]) => {
+    if (!fares || fares.length === 0) return null;
+    return Math.min(...fares.map(f => f.price));
+};
 
 const FlightSearchResults = () => {
+    const router = useRouter();
+
+    const {
+        currentBooking,
+        setOutboundSegment,
+        setReturnSegment,
+        initializeBooking,
+    } = useBookingStore();
+
+    const [params] = useQueryStates({
+        from: parseAsString,
+        to: parseAsString,
+        departureDate: parseAsString,
+        returnDate: parseAsString,
+        passengerCount: parseAsInteger.withDefault(1),
+        flightClass: parseAsString.withDefault('ECONOMY'),
+        tripType: parseAsString.withDefault('return'),
+    });
+
+    useEffect(() => {
+        if (params.flightClass && params.passengerCount) {
+            initializeBooking(params.flightClass, params.passengerCount);
+        }
+    }, [params.flightClass, params.passengerCount, initializeBooking]);
+
+    const formatDate = (dateStr?: string) => {
+        if (!dateStr) return '-';
+        try {
+            return format(new Date(dateStr), 'dd MMMM yyyy');
+        } catch {
+            return dateStr;
+        }
+    };
+
+    const departureQuery = trpc.flights.getFlights.useQuery(
+        {
+            from: params.from!,
+            to: params.to!,
+            departureDate: new Date(params.departureDate!),
+        },
+        {
+            enabled: Boolean(params.from && params.to && params.departureDate),
+        }
+    );
+
+    const returnQuery = trpc.flights.getFlights.useQuery(
+        {
+            from: params.to!,
+            to: params.from!,
+            departureDate: params.returnDate ? new Date(params.returnDate) : new Date(),
+        },
+        {
+            enabled: params.tripType === 'return' && Boolean(params.returnDate),
+        }
+    );
+
+    if (!params.from || !params.to || !params.departureDate) {
+        return (
+            <div className="p-10 text-center text-red-600 font-semibold">
+                Invalid or missing search parameters.
+            </div>
+        );
+    }
+
+    const renderFlightCard = (
+        flight: any,
+        direction: 'outbound' | 'return',
+        onSelect: (flight: any) => void,
+        selectedId?: string
+    ) => {
+        const price = getLowestFare(flight.fares);
+        const duration = calculateDuration(flight.departureTime, flight.arrivalTime);
+        const seatsLeft = flight.seatCapacity - flight.tickets.length;
+
+        return (
+            <FlightCard
+                key={flight.id}
+                airline={flight.airline.name}
+                flightNo={flight.flightNumber}
+                departTime={new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                arriveTime={new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                from={direction === 'outbound' ? params.from ?? '' : params.to ?? ''}
+                to={direction === 'outbound' ? params.to ?? '' : params.from ?? ''}
+                duration={duration}
+                baggage="20kg"
+                aircraft="Airbus A320"
+                price={price ? `$${price}` : 'N/A'}
+                seatsLeft={seatsLeft}
+                selected={selectedId === flight.id}
+                onClick={() => onSelect(flight)}
+            />
+        );
+    };
+
     return (
-        <div className="p-10 bg-gray-100 min-h-screen">
-            {/* Header */}
-            <div className="max-w-7xl mx-auto mb-8">
-                <h1 className="text-2xl font-bold">Flight Search Results</h1>
-                <p className="text-gray-700 text-sm mt-1">
-                    From: <strong>SYD</strong> &nbsp; To: <strong>MEL</strong> &nbsp; Depart: <strong>22-04-2025</strong> &nbsp;
-                    Return: <strong>27-04-2025</strong> &nbsp; Passengers: <strong>1</strong> &nbsp; Class: <strong>Economy</strong>
-                </p>
-            </div>
+        <>
+            <FlightSummaryHeader
+                departureCode={params.from}
+                destinationCode={params.to}
+                departureDate={formatDate(params.departureDate)}
+                returnDate={params.returnDate ? formatDate(params.returnDate) : ''}
+                passengers={params.passengerCount}
+                flightClass={params.flightClass}
+            />
+            
+            <div className="p-4 sm:p-10 bg-gray-100 min-h-screen">
+                {/* Filters */}
+                <div className="max-w-7xl mx-auto flex flex-wrap gap-3 mb-6 justify-center sm:justify-start">
+                    <button className="bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold">Price</button>
+                    <button className="bg-white border px-5 py-2 rounded-full text-sm">Departure Time</button>
+                    <button className="bg-white border px-5 py-2 rounded-full text-sm">Duration</button>
+                </div>
 
-            {/* Sorting Controls */}
-            <div className="max-w-7xl mx-auto flex gap-3 mb-6">
-                <button className="bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold">Price</button>
-                <button className="bg-white border px-5 py-2 rounded-full text-sm">Departure Time</button>
-                <button className="bg-white border px-5 py-2 rounded-full text-sm">Duration</button>
-            </div>
+                {/* Flight results */}
+                <div className="max-w-7xl mx-auto space-y-10">
+                    {/* Outbound flights */}
+                    <section>
+                        <h2 className="font-semibold text-lg mb-4 text-center sm:text-left">
+                            {params.from} to {params.to} - {formatDate(params.departureDate)}
+                        </h2>
+                        <div className="space-y-4">
+                            {departureQuery.data?.map((flight) =>
+                                renderFlightCard(flight, 'outbound', setOutboundSegment, currentBooking.itinerary.outbound?.id)
+                            )}
+                        </div>
+                    </section>
 
-            {/* Flight Lists */}
-            <div className="max-w-7xl mx-auto space-y-10">
-                <section>
-                    <h2 className="font-semibold text-lg mb-4">SYD to MEL - 22 April 2025</h2>
-                    <div className="space-y-4">
-                        {/* Map outbound flights here */}
-                        {/* Example: */}
-                        <FlightCard
-                            airline="FlyDreamAir"
-                            flightNo="FD422"
-                            departTime="15:30"
-                            arriveTime="17:15"
-                            from="SYD"
-                            to="MEL"
-                            duration="1h 45m"
-                            baggage="20kg"
-                            aircraft="Airbus A320"
-                            price="$102"
-                            seatsLeft={18}
-                        />
-                        {/* Add other FlightCard components */}
-                    </div>
-                </section>
+                    {/* Return flights */}
+                    {params.tripType === 'return' && params.returnDate && returnQuery.data && (
+                        <section>
+                            <h2 className="font-semibold text-lg mb-4 text-center sm:text-left">
+                                {params.to} to {params.from} - {formatDate(params.returnDate)}
+                            </h2>
+                            <div className="space-y-4">
+                                {returnQuery.data.map((flight) =>
+                                    renderFlightCard(flight, 'return', setReturnSegment, currentBooking.itinerary.return?.id)
+                                )}
+                            </div>
+                        </section>
+                    )}
+                </div>
 
-                <section>
-                    <h2 className="font-semibold text-lg mb-4">MEL to SYD - 27 April 2025</h2>
-                    <FlightCard
-                        airline="FlyDreamAir"
-                        flightNo="FD205"
-                        departTime="9:45"
-                        arriveTime="11:30"
-                        from="MEL"
-                        to="SYD"
-                        duration="1h 45m"
-                        baggage="20kg"
-                        aircraft="Airbus A320"
-                        price="$192"
-                        seatsLeft={22}
-                    />
-                </section>
+                {/* Navigation buttons */}
+                <div className="max-w-7xl mx-auto mt-10 flex flex-col sm:flex-row gap-4 sm:justify-between items-center">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-full sm:w-auto px-6 py-3 bg-white border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-50"
+                    >
+                        ← Back
+                    </button>
+                    <button
+                        onClick={() => router.push('/passenger-details')}
+                        className="w-full sm:w-auto px-6 py-3 bg-blue-700 text-white rounded-md text-sm font-semibold hover:bg-blue-800"
+                    >
+                        Continue →
+                    </button>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -4,8 +4,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 interface FlightSummaryHeaderProps {
   departureCode: string;
   destinationCode: string;
-  departureCity?: string;
-  destinationCity?: string;
   departureDate: string;
   returnDate: string;
   passengers: number;
@@ -15,15 +13,13 @@ interface FlightSummaryHeaderProps {
 const FlightSummaryHeader: React.FC<FlightSummaryHeaderProps> = ({
   departureCode,
   destinationCode,
-  departureCity,
-  destinationCity,
   departureDate,
   returnDate,
   passengers,
   flightClass
 }) => {
   return (
-    <div className="w-full my-8 bg-gray-50 border-b border-gray-100">
+    <div className="w-full py-8 bg-gray-50 border-b border-gray-100">
       <div className="container mx-auto px-4 max-w-6xl py-6">
         <div className="flex flex-col space-y-5">
           {/* Route information */}
@@ -39,7 +35,7 @@ const FlightSummaryHeader: React.FC<FlightSummaryHeaderProps> = ({
               {destinationCode} - {departureCode}
             </h2>
           </div>
-          
+
           {/* Flight details */}
           <div className="flex flex-wrap gap-y-2 items-center text-base text-gray-700">
             <div className="mr-5">

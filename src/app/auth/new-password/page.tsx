@@ -1,4 +1,4 @@
-import NewPass from "src/app/auth/new_pass/components/NewPass";
+import NewPass from "src/app/auth/new-password/components/NewPassword";
 
 export default function Booking() {
     return (

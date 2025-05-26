@@ -22,6 +22,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   password      String
+  bookings      Booking[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
@@ -84,64 +85,200 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
-model Flights {
-  id             String   @id @default(cuid())
-  flightNumber   String   @unique
-  departureTime  DateTime
-  arrivalTime    DateTime
-  duration       Int
-  price          Float
-  seatsAvailable Int
-
-  departureId   String
-  destinationId String
-  airlineId     String
-
-  departure   Airports   @relation("DepartureAirport", fields: [departureId], references: [id])
-  destination Airports   @relation("DestinationAirport", fields: [destinationId], references: [id])
-  airline     Airlines   @relation(fields: [airlineId], references: [id])
-  bookings    Bookings[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Booking {
+  id          String        @id @default(uuid())
+  user        User?         @relation(fields: [userId], references: [id])
+  userId      String?
+  itinerary   Itinerary     @relation(fields: [itineraryId], references: [id])
+  itineraryId String
+  passengers  Passenger[]
+  bookingCode String        @unique
+  totalPrice  Float
+  status      BookingStatus @default(PENDING)
+  bookedAt    DateTime      @default(now())
+  payments    Payment[]
 }
 
-model Airports {
-  id      String @id @default(cuid())
-  code    String @unique
-  name    String
-  city    String
-  country String
-
-  departures Flights[] @relation("DepartureAirport")
-  arrivals   Flights[] @relation("DestinationAirport")
+model Itinerary {
+  id       String          @id @default(uuid())
+  segments FlightSegment[]
+  bookings Booking[]
 }
 
-model Airlines {
-  id   String @id @default(cuid())
-  name String
-  code String @unique
+model Fare {
+  id              String        @id @default(uuid())
+  flightSegment   FlightSegment @relation(fields: [flightSegmentId], references: [id])
+  flightSegmentId String
 
-  flights Flights[]
+  fareClass       FareClass
+  price           Int // in dollars or cents
+  refundable      Boolean
+  baggageIncluded Int // in kg
+  validUntil      DateTime
 }
 
-model Passengers {
-  id       String @id @default(cuid())
-  name     String
-  email    String @unique
-  passport String
+model FlightSegment {
+  id           String @id @default(uuid())
+  seatCapacity Int
 
-  bookings Bookings[]
+  flightNumber       String     @unique
+  departureTime      DateTime
+  arrivalTime        DateTime
+  departureAirport   Airport    @relation("Departure", fields: [departureAirportId], references: [id])
+  departureAirportId String
+  arrivalAirport     Airport    @relation("Arrival", fields: [arrivalAirportId], references: [id])
+  arrivalAirportId   String
+  airline            Airline    @relation(fields: [airlineId], references: [id])
+  airlineId          String
+  fareClass          FareClass
+  seatMapUrl         String?
+  itinerary          Itinerary? @relation(fields: [itineraryId], references: [id])
+  itineraryId        String?
+  tickets            Ticket[]
+  fares              Fare[]
+  Seat               Seat[]
 }
 
-model Bookings {
-  id          String   @id @default(cuid())
-  flightId    String
-  passengerId String
+model Passenger {
+  id          String    @id @default(uuid())
+  booking     Booking   @relation(fields: [bookingId], references: [id])
+  bookingId   String
+  title       String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  email       String
+  phoneNumber String
+  passport    String
+  // gender      String
+  tickets     Ticket[]
+  bags        Baggage[]
+  meals       Meal[]
+}
+
+model Ticket {
+  id           String        @id @default(uuid())
+  passenger    Passenger     @relation(fields: [passengerId], references: [id])
+  passengerId  String
+  segment      FlightSegment @relation(fields: [segmentId], references: [id])
+  segmentId    String
+  ticketNumber String        @unique
+  ticketStatus TicketStatus  @default(VALID)
+  seat         Seat          @relation(fields: [seatId], references: [id])
+  seatId       String        @unique
+}
+
+model Seat {
+  id          String   @id @default(uuid())
   seatNumber  String
-  status      String
-  bookedAt    DateTime @default(now())
+  seatType    SeatType
+  isAvailable Boolean  @default(true)
+  price       Int
 
-  flight    Flights    @relation(fields: [flightId], references: [id])
-  passenger Passengers @relation(fields: [passengerId], references: [id])
+  segment   FlightSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  segmentId String
+  ticket    Ticket?
+
+  @@unique([seatNumber, segmentId]) // ensures no duplicates in a flight
+}
+
+model Baggage {
+  id          String    @id @default(uuid())
+  passenger   Passenger @relation(fields: [passengerId], references: [id])
+  passengerId String
+
+  type   BaggageType @relation(fields: [typeId], references: [id])
+  typeId String
+}
+
+model BaggageType {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  maxWeight Float?
+  price     Float
+  baggages  Baggage[]
+}
+
+model Meal {
+  id          String    @id @default(uuid())
+  passenger   Passenger @relation(fields: [passengerId], references: [id])
+  passengerId String
+
+  type   MealType @relation(fields: [typeId], references: [id])
+  typeId String
+}
+
+model MealType {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+  price       Float
+  meals       Meal[]
+}
+
+model Airport {
+  id          String          @id @default(uuid())
+  code        String          @unique
+  name        String
+  city        String
+  country     String
+  flightsFrom FlightSegment[] @relation("Departure")
+  flightsTo   FlightSegment[] @relation("Arrival")
+}
+
+model Airline {
+  id       String          @id @default(uuid())
+  code     String          @unique
+  name     String
+  segments FlightSegment[]
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  booking   Booking       @relation(fields: [bookingId], references: [id])
+  bookingId String
+  amount    Float
+  method    PaymentMethod
+  paidAt    DateTime
+  status    PaymentStatus
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FAILED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+  EXPIRED
+}
+
+enum FareClass {
+  ECONOMY
+  PREMIUM_ECONOMY
+  BUSINESS
+  FIRST
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum SeatType {
+  WINDOW
+  MIDDLE
+  AISLE
 }
