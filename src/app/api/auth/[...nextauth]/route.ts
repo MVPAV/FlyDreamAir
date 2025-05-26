@@ -25,12 +25,17 @@ const handler = NextAuth({
                 password: {},
             },
             async authorize(credentials, req) {
+                if (!credentials?.email || !credentials?.password) {
+                    return null;
+                }
+
                 const user = await getUserByEmail(credentials.email);
 
-                const passwordCorrect = await compare(
-                    credentials?.password || "",
-                    user.password
-                );
+                if (!user || !user.password) {
+                    return null;
+                }
+
+                const passwordCorrect = await compare(credentials.password, user.password);
 
                 if (passwordCorrect) {
                     return {
@@ -39,9 +44,8 @@ const handler = NextAuth({
                     };
                 }
 
-                console.log("credentials", credentials);
                 return null;
-            },
+            }
         }),
     ],
 });

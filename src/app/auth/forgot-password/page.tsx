@@ -1,4 +1,4 @@
-import ForgotPassword from "src/app/auth/forgot_password/components/ForgotPassword";
+import ForgotPassword from "src/app/auth/forgot-password/components/ForgotPassword";
 
 export default function Booking() {
     return (
