@@ -10,7 +10,9 @@ import {useSeatStore} from "src/store/seatStore";
 import PassengerInfoList from "src/app/(main)/payment/components/PassengerInfoList";
 import {trpc} from "src/utils/trpc";
 import CurrentFlightHeader from "src/app/(main)/components/CurrentFlightHeader";
+import PrimaryModal from "src/app/components/PrimaryModal";
 import { useSession } from "next-auth/react";
+
 
 export default function Payment() {
     const {currentBooking} = useBookingStore();
@@ -24,6 +26,8 @@ export default function Payment() {
     const updateTotalPrice = useBookingStore((s) => s.updateTotalPrice)
     const { data: session } = useSession();
     const userId = session?.user?.id;
+    const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+    const [showErrorModal, setShowErrorModal] = React.useState(false);
 
     const buildPassengerSummaries = () => {
         return passengers.map((p) => {
@@ -101,9 +105,11 @@ export default function Payment() {
             {
                 onSuccess: (data) => {
                     console.log('Booking confirmed:', data);
+                    setShowSuccessModal(true);
                 },
                 onError: (error) => {
                     console.error('Booking confirmation failed:', error);
+                    setShowErrorModal(true);
                 },
             }
         );
@@ -130,6 +136,24 @@ export default function Payment() {
 
                 <PaymentForm onSubmit={handlePaymentSubmit}/>
             </main>
+
+            <PrimaryModal
+                showModal={showSuccessModal}
+                setShowModal={setShowSuccessModal}
+                onCloseModal={() => setShowSuccessModal(false)}
+            >
+                <h2 className="text-lg font-semibold mb-2">Booking Confirmed</h2>
+                <p>Your booking has been successfully confirmed!</p>
+            </PrimaryModal>
+
+            <PrimaryModal
+                showModal={showErrorModal}
+                setShowModal={setShowErrorModal}
+                onCloseModal={() => setShowErrorModal(false)}
+            >
+                <h2 className="text-lg font-semibold mb-2 text-red-600">Booking Failed</h2>
+                <p>There was an error while processing your booking. Please try again.</p>
+            </PrimaryModal>
         </div>
     );
 }

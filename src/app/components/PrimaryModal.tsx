@@ -6,12 +6,14 @@ export default function PrimaryModal({
                                          setShowModal,
                                          onCloseModal,
                                          showCloseButton = true,
+                                         isOpen
                                      }: {
-    children?: ReactNode;
-    showModal: boolean;
-    setShowModal: (value: boolean) => void;
-    onCloseModal?: () => void;
-    showCloseButton?: boolean;
+    children?: ReactNode,
+    showModal: boolean,
+    setShowModal: (value: boolean) => void,
+    onCloseModal?: () => void,
+    showCloseButton?: boolean,
+    isOpen?: boolean
 }) {
     const modalRef = useRef<HTMLDivElement>(null);
 
