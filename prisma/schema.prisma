@@ -85,6 +85,8 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
+// System models
+
 model Booking {
   id          String        @id @default(uuid())
   user        User?         @relation(fields: [userId], references: [id])
