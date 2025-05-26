@@ -52,7 +52,7 @@ function FlightBaggage() {
     const { totalStandard, totalOversized, totalPrice } = getTotalBaggageCount();
 
     return (
-        <main className="flex overflow-hidden flex-col bg-white pt-20">
+        <main className="flex flex-col w-full px-4 sm:px-6 lg:px-8 pt-20">
             <FlightSummaryHeader
                 departureCode={itinerary.outbound?.departureAirport.code ?? 'SYD'}
                 destinationCode={itinerary.outbound?.arrivalAirport.code ?? 'MEL'}
@@ -70,7 +70,7 @@ function FlightBaggage() {
                 flightClass="Economy"
             />
 
-            <div className="max-w-4xl mx-auto bg-white p-10 pt-5 border border-gray-200 shadow-lg text-left">
+            <div className="max-w-4xl w-full mx-auto bg-white p-10 pt-5 shadow-lg text-left">
                 <div className="mb-6">
                     <p className="text-2xl font-bold mb-2">Select Your Baggage</p>
                     <BaggageInfo />
