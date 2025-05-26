@@ -9,6 +9,8 @@ import FlightSummaryHeader from 'src/app/(main)/components/FlightSummaryHeader';
 import { useRouter } from 'next/navigation';
 import { useBookingStore } from 'src/store/bookingStore';
 import { useEffect } from 'react';
+import PrimaryModal from "../../../components/PrimaryModal";
+import {useState} from "react";
 
 const calculateDuration = (departure: Date, arrival: Date) => {
     const diff = (new Date(arrival).getTime() - new Date(departure).getTime()) / 60000;
@@ -47,6 +49,9 @@ const FlightSearchResults = () => {
             initializeBooking(params.flightClass, params.passengerCount);
         }
     }, [params.flightClass, params.passengerCount, initializeBooking]);
+
+    const [showModal, setShowModal] = useState(false);
+    const [missingPart, setMissingPart] = useState<'outbound' | 'return' | null>(null);
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) return '-';
@@ -116,6 +121,24 @@ const FlightSearchResults = () => {
             />
         );
     };
+    const handleContinue = () => {
+        const { outbound, return: returnSegment } = currentBooking.itinerary;
+
+        if (!outbound?.id) {
+            setMissingPart('outbound');
+            setShowModal(true);
+            return;
+        }
+
+        if (params.tripType === 'return' && !returnSegment?.id) {
+            setMissingPart('return');
+            setShowModal(true);
+            return;
+        }
+
+        router.push('/passenger-details');
+    };
+
 
     return (
         <>
@@ -174,13 +197,23 @@ const FlightSearchResults = () => {
                         ← Back
                     </button>
                     <button
-                        onClick={() => router.push('/passenger-details')}
+                        onClick={handleContinue}
                         className="w-full sm:w-auto px-6 py-3 bg-blue-700 text-white rounded-md text-sm font-semibold hover:bg-blue-800"
                     >
                         Continue →
                     </button>
                 </div>
             </div>
+            <PrimaryModal showModal={showModal} setShowModal={setShowModal}>
+                <h2 className="text-lg font-semibold mb-2">
+                    {missingPart === 'outbound' && 'Outbound Flight Not Selected'}
+                    {missingPart === 'return' && 'Return Flight Not Selected'}
+                </h2>
+                <p className="text-sm text-gray-600">
+                    {missingPart === 'outbound' && 'Please select an outbound flight before continuing.'}
+                    {missingPart === 'return' && 'Please select a return flight before continuing.'}
+                </p>
+            </PrimaryModal>
         </>
     );
 };

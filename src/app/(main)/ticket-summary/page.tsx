@@ -164,7 +164,7 @@ export default function TicketSummary() {
                 flightClass={currentBooking.flightClass}
             />
 
-            <div className="max-w-4xl mx-auto border rounded-md shadow-sm bg-white -mt-6 px-4 sm:px-6">
+            <div className="max-w-4xl mx-auto rounded-md shadow-sm bg-white px-4 sm:px-6">
                 <h1 className="text-2xl font-bold pt-6 pb-2">Booking Summary</h1>
                 <hr className="border-t border-gray-300 mt-2"/>
 
@@ -199,26 +199,28 @@ export default function TicketSummary() {
                     <BookingSummary data={bookingData}/>
                 </div>
 
-                <div className="flex justify-between pb-6 text-base font-semibold">
+                <div className="flex justify-between pb-6 mx-6 text-base font-semibold">
                     <span>Total:</span>
                     <span className="text-blue-700">${total}</span>
                 </div>
             </div>
 
             {/* Responsive Button Row */}
-            <div className="mt-6 mb-8 px-4 sm:px-6 max-w-4xl mx-auto flex flex-col sm:flex-row justify-between gap-4">
-                <button
-                    onClick={() => router.back()}
-                    className="bg-white text-black py-3 px-6 rounded-md font-semibold w-full sm:w-auto border border-gray-300 hover:bg-gray-100 transition"
-                >
-                    Return
-                </button>
-                <button
-                    onClick={() => router.push("/payment")}
-                    className="bg-blue-800 hover:bg-blue-900 text-white py-3 px-6 rounded-md font-semibold w-full sm:w-auto"
-                >
-                    Proceed to Payment
-                </button>
+            <div className="mt-4 mb-4 px-48 flex justify-end items-center">
+                <div className="flex gap-3 mr-52">
+                    <button
+                        onClick={() => router.back()}
+                        className="bg-white text-black py-3 px-6 rounded-md font-semibold border border-gray-300 hover:bg-gray-100 transition"
+                    >
+                        Return
+                    </button>
+                    <button
+                        onClick={() => router.push("/payment")}
+                        className="bg-blue-800 hover:bg-blue-900 text-white py-3 px-6 rounded-md font-semibold"
+                    >
+                        Proceed to Payment
+                    </button>
+                </div>
             </div>
         </div>
     );

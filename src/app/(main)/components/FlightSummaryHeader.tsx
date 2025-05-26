@@ -47,9 +47,11 @@ const FlightSummaryHeader: React.FC<FlightSummaryHeaderProps> = ({
             <div className="mr-5">
               <span className="font-semibold text-black">Depart:</span> {departureDate}
             </div>
+            {returnDate &&
             <div className="mr-5">
               <span className="font-semibold text-black">Return:</span> {returnDate}
             </div>
+            }
             <div className="mr-5">
               <span className="font-semibold text-black">Passengers:</span> {passengers}
             </div>

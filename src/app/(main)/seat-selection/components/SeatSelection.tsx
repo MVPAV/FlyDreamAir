@@ -5,6 +5,8 @@ import {useRouter} from 'next/navigation';
 import {useBookingStore} from 'src/store/bookingStore';
 import {trpc} from 'src/utils/trpc';
 import {useSeatStore} from "src/store/seatStore";
+import PrimaryModal from "../../../components/PrimaryModal";
+import {useState} from "react";
 
 export function SeatLegend() {
     return (
@@ -65,6 +67,7 @@ const SeatSelection = () => {
         }
     }, [segment?.id, seats, setSeatsForSegment]);
 
+    const [showModal, setShowModal] = useState(false);
 
     const getSelectedSeatId = (index: number) =>
         passengers[index].tickets.find((t) => t.segmentId === segment?.id)?.seatId;
@@ -74,6 +77,20 @@ const SeatSelection = () => {
         if (!segment?.id) return;
         updatePassengerTicketSeat(index, segment, seatId === current ? '' : seatId);
     };
+
+    const handleContinue = () => {
+        const hasMissingSeats = passengers.some((p) =>
+            p.tickets.find((t) => t.segmentId === segment?.id && !t.seatId)
+        );
+
+        if (hasMissingSeats) {
+            setShowModal(true);
+            return;
+        }
+
+        router.push('/flight-baggages');
+    };
+
 
     const parseLayout = (seats: { seatNumber: string }[]) => {
         const layout: Record<number, Record<string, any>> = {};
@@ -188,12 +205,22 @@ const SeatSelection = () => {
                     Back to Passenger Details
                 </button>
                 <button
-                    onClick={() => router.push('/flight-baggages')}
+                    onClick={handleContinue}
                     className="w-full sm:w-auto bg-blue-800 text-white px-6 py-3 rounded shadow hover:bg-blue-900"
                 >
                     Select your Baggage
                 </button>
             </div>
+
+            <PrimaryModal showModal={showModal} setShowModal={setShowModal}>
+                <div className="">
+                    <h2 className="text-lg font-semibold mb-2">Seat Selection Required</h2>
+                    <p className="text-sm text-gray-600">
+                        Please select a seat for each passenger before continuing.
+                    </p>
+                </div>
+            </PrimaryModal>
+
         </div>
     );
 };
