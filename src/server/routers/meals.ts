@@ -1,5 +1,5 @@
 import {publicProcedure, router} from '../trpc';
-import {getMealTypes} from "src/db/meals";
+import {getMealTypes} from "src/server/db/meals";
 
 export const mealsRouter = router({
     getMealTypes: publicProcedure

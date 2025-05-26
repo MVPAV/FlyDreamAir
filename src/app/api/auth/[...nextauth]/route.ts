@@ -1,7 +1,7 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {compare} from "bcrypt";
-import {getUserByEmail} from "src/db/users";
+import {getUserByEmail} from "src/server/db/users";
 
 const handler = NextAuth({
     session: {

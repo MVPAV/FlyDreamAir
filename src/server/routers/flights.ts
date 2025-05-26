@@ -1,6 +1,6 @@
 import {publicProcedure, router} from '../trpc';
 import {z} from 'zod';
-import {getFlights} from 'src/db/flights';
+import {getFlights} from 'src/server/db/flights';
 
 export const flightsRouter = router({
     getFlights: publicProcedure

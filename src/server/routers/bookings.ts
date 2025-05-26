@@ -1,6 +1,6 @@
 import {publicProcedure, router} from '../trpc';
 import {z} from 'zod';
-import {confirmBooking} from 'src/db/bookings';
+import {confirmBooking} from 'src/server/db/bookings';
 import postmark from 'postmark';
 import * as process from 'node:process';
 import {ClientBooking} from "src/constants/types";

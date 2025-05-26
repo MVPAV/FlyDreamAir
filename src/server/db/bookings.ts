@@ -1,4 +1,4 @@
-import {prisma} from 'src/db/prisma';
+import {prisma} from 'src/server/db/prisma';
 import {ClientBooking} from 'src/constants/types';
 
 function generateBookingCode(): string {
