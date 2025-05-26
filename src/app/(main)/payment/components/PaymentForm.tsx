@@ -37,11 +37,11 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
   // Format expiry date as MM/YY
   const formatExpiryDate = (value: string) => {
     const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    
+
     if (v.length >= 2) {
       return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
     }
-    
+
     return v;
   };
 
@@ -50,7 +50,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
       <h2 className="text-black text-2xl mt-[27px] mb-[26px]">
         Payment Information
       </h2>
-      
+
       <div className="mb-4">
         <label htmlFor="cardNumber" className="text-black block mb-[13px]">
           Card Number
@@ -66,7 +66,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
           required
         />
       </div>
-      
+
       <div className="mb-4">
         <label htmlFor="cardholderName" className="text-black block mb-[13px]">
           Cardholder Name
@@ -80,7 +80,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
           required
         />
       </div>
-      
+
       <div className="flex w-[636px] max-w-full items-stretch gap-[40px_100px] flex-wrap mb-4">
         <div className="flex flex-col items-stretch flex-1">
           <label htmlFor="expiryDate" className="text-black block mb-[13px]">
@@ -97,7 +97,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
             required
           />
         </div>
-        
+
         <div className="flex flex-col items-stretch whitespace-nowrap flex-1">
           <label htmlFor="cvv" className="text-black block mb-[13px]">
             CVV
@@ -113,7 +113,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
           />
         </div>
       </div>
-      
+
       <div className="mb-4">
         <label htmlFor="billingAddress" className="text-black block mb-[13px]">
           Billing Address
@@ -127,7 +127,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
           required
         />
       </div>
-      
+
       <div className="bg-[rgba(238,243,251,1)] border flex items-stretch gap-[7px] text-base text-black font-normal flex-wrap ml-2.5 mt-[39px] p-[13px] rounded-[10px] border-[rgba(0,0,0,0.1)] border-solid">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/c6873386ec4a4d6982ab9f318cb7a156/3d50ac038c359d242ba8916f5f75acd35a71dccc?placeholderIfAbsent=true"
@@ -140,7 +140,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
           Your payment information is encrypted and secure.
         </div>
       </div>
-      
+
       <button
         type="submit"
         className="bg-[rgba(5,12,156,1)] block mx-auto w-[396px] max-w-full text-2xl text-white text-center mt-[58px] px-[70px] py-[19px] rounded-[10px] border-[rgba(0,0,0,0.2)] border-r border-l max-md:mt-10 max-md:px-5"

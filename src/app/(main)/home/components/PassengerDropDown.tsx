@@ -1,9 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ChevronDown, Minus, Plus } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { ChevronDown, Minus, Plus } from 'lucide-react';
 
-export default function PassengerDropdown() {
+interface PassengerDropdownProps {
+    onChange?: (totalCount: number) => void;
+}
+
+export default function PassengerDropdown({ onChange }: PassengerDropdownProps) {
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
     const [infants, setInfants] = useState(0);
@@ -11,18 +15,25 @@ export default function PassengerDropdown() {
 
     const hasSelection = adults > 0 || children > 0 || infants > 0;
     const totalSummary = hasSelection
-        ? `${adults} Adult${adults > 1 ? "s" : ""}` +
-        (children > 0 ? `, ${children} Child${children > 1 ? "ren" : ""}` : "") +
-        (infants > 0 ? `, ${infants} Infant${infants > 1 ? "s" : ""}` : "")
-        : "Passengers";
+        ? `${adults} Adult${adults > 1 ? 's' : ''}` +
+        (children > 0 ? `, ${children} Child${children > 1 ? 'ren' : ''}` : '') +
+        (infants > 0 ? `, ${infants} Infant${infants > 1 ? 's' : ''}` : '')
+        : 'Passengers';
 
-    const handleChange = (setter, value) => {
+    const handleChange = (setter: (value: number) => void, value: number) => {
         if (value < 0) return;
         setter(value);
     };
 
+    useEffect(() => {
+        if (onChange) {
+            const total = adults + children + infants;
+            onChange(total);
+        }
+    }, [adults, children, infants, onChange]);
+
     return (
-        <div className="relative w-full ">
+        <div className="relative w-full">
             <button
                 type="button"
                 onClick={() => setOpen(!open)}
@@ -34,22 +45,26 @@ export default function PassengerDropdown() {
 
             {open && (
                 <div className="absolute left-0 w-full mt-1 bg-white border rounded-md shadow-lg z-10 p-4 space-y-4">
-                    {[{
-                        label: "Adults",
-                        description: "12 years and above",
-                        value: adults,
-                        setValue: setAdults
-                    }, {
-                        label: "Children",
-                        description: "2–11 years at time of travel",
-                        value: children,
-                        setValue: setChildren
-                    }, {
-                        label: "Infants",
-                        description: "0–23 months at time of travel",
-                        value: infants,
-                        setValue: setInfants
-                    }].map(({ label, description, value, setValue }) => (
+                    {[
+                        {
+                            label: 'Adults',
+                            description: '12 years and above',
+                            value: adults,
+                            setValue: setAdults,
+                        },
+                        {
+                            label: 'Children',
+                            description: '2–11 years at time of travel',
+                            value: children,
+                            setValue: setChildren,
+                        },
+                        {
+                            label: 'Infants',
+                            description: '0–23 months at time of travel',
+                            value: infants,
+                            setValue: setInfants,
+                        },
+                    ].map(({ label, description, value, setValue }) => (
                         <div className="flex justify-between items-center" key={label}>
                             <div>
                                 <p className="font-medium text-sm">{label}</p>
