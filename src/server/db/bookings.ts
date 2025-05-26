@@ -66,3 +66,48 @@ export async function confirmBooking(booking: ClientBooking, userId?: string) {
     const created = await prisma.booking.create({data});
     return created;
 }
+
+export async function findBookingByReference(reference: string, lastName: string) {
+    const booking = await prisma.booking.findFirst({
+        where: {
+            bookingCode: reference,
+            passengers: {
+                some: {
+                    lastName: {
+                        equals: lastName,
+                        mode: 'insensitive',
+                    },
+                },
+            },
+        },
+        include: {
+            itinerary: {
+                include: {
+                    segments: true,
+                },
+            },
+            passengers: {
+                include: {
+                    tickets: {
+                        include: {
+                            segment: {
+                                include: {
+                                    departureAirport: true,
+                                    arrivalAirport: true,
+                                },
+                            },
+                            seat: true,
+                        },
+                    },
+                    bags: {
+                        include: {type: true},
+                    },
+                    meals: {
+                        include: {type: true},
+                    },
+                },
+            },
+        },
+    });
+    return booking;
+}

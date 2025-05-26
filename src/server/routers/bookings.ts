@@ -1,6 +1,6 @@
 import {publicProcedure, router} from '../trpc';
 import {z} from 'zod';
-import {confirmBooking} from 'src/server/db/bookings';
+import {confirmBooking, findBookingByReference} from 'src/server/db/bookings';
 import postmark from 'postmark';
 import * as process from 'node:process';
 import {ClientBooking} from "src/constants/types";
@@ -91,5 +91,12 @@ export const bookingsRouter = router({
             }
 
             return {success: true, bookingId: newBooking.id};
+        }),
+
+    findBookingByReference: publicProcedure
+        .input(z.object({reference: z.string(), lastName: z.string()}))
+        .query(async ({input}) => {
+            const booking = await findBookingByReference(input.reference, input.lastName);
+            return booking
         }),
 });
