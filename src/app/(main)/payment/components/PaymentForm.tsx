@@ -32,7 +32,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
 
     const inputClass = (field: string) =>
         `w-full border text-black text-sm px-4 py-2.5 rounded-md ${
-            errors[field] ? 'border-red-500' : 'border-black/20'
+            errors[field] ? 'border-red/500' : 'border-black/20'
         }`;
 
     const ErrorMsg = ({field}: { field: string }) =>
@@ -87,7 +87,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                     onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                     placeholder="Enter card number"
                     maxLength={19}
-                    className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                    className={inputClass(cardNumber)}
 
                 />
                 <ErrorMsg field="cardNumber"/>
@@ -102,7 +102,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                     value={cardholderName}
                     onChange={(e) => setCardholderName(e.target.value)}
                     placeholder="Enter card holder name"
-                    className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                    className={inputClass(cardholderName)}
                 />
                 <ErrorMsg field="cardholderName"/>
             </div>
@@ -118,7 +118,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                         onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
                         placeholder="MM/YY"
                         maxLength={5}
-                        className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                        className={inputClass(expiryDate)}
                     />
                     <ErrorMsg field="expiryDate"/>
                 </div>
@@ -132,7 +132,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                         onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
                         placeholder="123"
                         maxLength={3}
-                        className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                        className={inputClass(cvv)}
                     />
                     <ErrorMsg field="cvv"/>
                 </div>
@@ -146,8 +146,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({onSubmit}) => {
                     type="text"
                     value={billingAddress}
                     onChange={(e) => setBillingAddress(e.target.value)}
-                    placeholder="Enter Billing Address    "
-                    className="w-full border text-black text-sm px-4 py-2.5 rounded-md border-black/20"
+                    placeholder="Enter Billing Address"
+                    className={inputClass(billingAddress)}
 
                 />
                 <ErrorMsg field="billingAddress"/>
