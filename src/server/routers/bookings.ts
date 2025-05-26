@@ -7,7 +7,6 @@ import {ClientBooking} from "src/constants/types";
 import {useSeatStore} from "src/store/seatStore";
 import {useMealTypeStore} from "src/store/mealTypeStore";
 import {useBaggageTypeStore} from "src/store/baggageTypeStore";
-import {calculateTotalPriceFromStore} from "src/utils/bookings";
 
 export const bookingsRouter = router({
     confirmBooking: publicProcedure
@@ -72,7 +71,7 @@ export const bookingsRouter = router({
                         booking_code: newBooking.bookingCode,
                         passenger_names: passengerNames,
                         flight_class: booking.flightClass,
-                        total_price: `$${calculateTotalPriceFromStore().toFixed(2)}`,
+                        total_price: `$${booking.totalPrice}`,
                         booking_status: "Confirmed",
                         departure_code: booking.itinerary.outbound?.departureAirport.code ?? '–',
                         arrival_code: booking.itinerary.outbound?.arrivalAirport.code ?? '–',

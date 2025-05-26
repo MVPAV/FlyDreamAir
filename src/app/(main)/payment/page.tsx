@@ -20,6 +20,7 @@ export default function Booking() {
     const getSeatNumberById = useSeatStore((s) => s.getSeatNumberById);
     const getSeatById = useSeatStore((s) => s.getSeatById);
     const {mutate: confirmBooking} = trpc.bookings.confirmBooking.useMutation();
+    const updateTotalPrice = useBookingStore((s) => s.updateTotalPrice)
 
     const buildPassengerSummaries = () => {
         return passengers.map((p) => {
@@ -74,7 +75,10 @@ export default function Booking() {
                     return s + (matched?.price ?? 0);
                 }, 0);
 
-            return sum + baggages + meals + seats + fare;
+
+            const total = sum + baggages + meals + seats + fare;
+            updateTotalPrice(total);
+            return total;
         }, 0);
     };
 

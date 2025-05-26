@@ -35,6 +35,9 @@ interface BookingState {
     addMealItem: (passengerIndex: number, segmentId: string, typeId: string) => void;
     removeMealItem: (passengerIndex: number, segmentId: string, typeId: string) => void;
     clearMealsForSegment: (pIndex: number, segmentId: string) => void;
+
+    // Price action
+    updateTotalPrice: (totalPrice: number) => void
 }
 
 // Helper to create a blank passenger
@@ -58,6 +61,7 @@ export const useBookingStore = create<BookingState>()(
             passengers: [],
             flightClass: 'Economy',
             passengerCount: 1,
+            totalPrice: 0
         },
 
         initializeBooking: (flightClass, passengerCount) =>
@@ -67,6 +71,7 @@ export const useBookingStore = create<BookingState>()(
                     passengers: Array.from({length: passengerCount}, () => initialPassenger()),
                     flightClass,
                     passengerCount,
+                    totalPrice: 0
                 };
             }),
 
@@ -167,6 +172,11 @@ export const useBookingStore = create<BookingState>()(
                     (m) => m.segmentId !== segmentId
                 );
             }),
+
+        updateTotalPrice: (totalPrice: number) =>
+            set((state) => {
+                state.currentBooking.totalPrice = totalPrice;
+            })
     })), {
         name: 'flydreamair-booking-store',
     })

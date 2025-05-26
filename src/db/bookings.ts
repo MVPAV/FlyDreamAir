@@ -1,6 +1,5 @@
 import {prisma} from 'src/db/prisma';
 import {ClientBooking} from 'src/constants/types';
-import {calculateTotalPriceFromStore} from "src/utils/bookings";
 
 function generateBookingCode(): string {
     return 'FD-' + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -54,7 +53,7 @@ export async function confirmBooking(booking: ClientBooking, userId?: string) {
     const data: any = {
         itinerary: {connect: {id: itinerary.id}},
         bookingCode,
-        totalPrice: calculateTotalPriceFromStore(),
+        totalPrice: booking.totalPrice,
         passengers: {
             create: passengerData,
         },
