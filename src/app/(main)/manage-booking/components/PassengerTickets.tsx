@@ -8,7 +8,7 @@ interface Ticket {
         flightNumber: string;
         departureAirport: { code: string };
         arrivalAirport: { code: string };
-        departureTime: string;
+        departureTime: Date;
     };
 }
 
@@ -18,8 +18,8 @@ interface PassengerTicketsProps {
     tickets: Ticket[];
 }
 
-const formatDateTime = (dateStr: string) =>
-    new Date(dateStr).toLocaleString(undefined, {
+const formatDate = (date: Date) =>
+    new Date(date).toLocaleString(undefined, {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
@@ -60,7 +60,7 @@ const PassengerTickets: React.FC<PassengerTicketsProps> = ({
                                 <td className="px-6 py-3">
                                     {t.segment.departureAirport.code} → {t.segment.arrivalAirport.code}
                                 </td>
-                                <td className="px-6 py-3 text-gray-700">{formatDateTime(t.segment.departureTime)}</td>
+                                <td className="px-6 py-3 text-gray-700">{formatDate(t.segment.departureTime)}</td>
                                 <td className="px-6 py-3">{t.seat?.seatNumber || '—'}</td>
                                 <td className="px-6 py-3">{t.ticketNumber}</td>
                             </tr>
@@ -88,7 +88,7 @@ const PassengerTickets: React.FC<PassengerTicketsProps> = ({
                                 </div>
                                 <div className="mb-1">
                                     <span className="font-medium text-gray-600">Departure:</span>{' '}
-                                    {formatDateTime(t.segment.departureTime)}
+                                    {formatDate(t.segment.departureTime)}
                                 </div>
                                 <div className="mb-1">
                                     <span className="font-medium text-gray-600">Seat:</span>{' '}
