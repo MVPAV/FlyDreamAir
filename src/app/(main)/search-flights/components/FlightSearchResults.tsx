@@ -149,8 +149,9 @@ const FlightSearchResults = () => {
                 returnDate={params.returnDate ? formatDate(params.returnDate) : ''}
                 passengers={params.passengerCount}
                 flightClass={params.flightClass}
+                tripType={params.tripType}
             />
-            
+
             <div className="p-4 sm:p-10 bg-gray-100 min-h-screen">
                 {/* Filters */}
                 <div className="max-w-7xl mx-auto flex flex-wrap gap-3 mb-6 justify-center sm:justify-start">

@@ -25,22 +25,20 @@ const SignupForm = () => {
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({email, password}),
-            });
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+        const response = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({email, password}),
+        });
+        if (response.ok) {
             setIsSuccess(true);
             console.log("Registration Successful", response);
-        } catch (error: any) {
+        } else {
+            const data = await response.json();
             setIsSuccess(false);
-            console.error("Registration Failed:", error);
+            console.error("Registration Failed:", data.error);
         }
     };
 

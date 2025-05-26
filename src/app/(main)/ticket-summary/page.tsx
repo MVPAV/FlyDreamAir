@@ -9,6 +9,7 @@ import {useBaggageTypeStore} from 'src/store/baggageTypeStore';
 import {useMealTypeStore} from 'src/store/mealTypeStore';
 import {useSeatStore} from "src/store/seatStore";
 import {useRouter} from "next/navigation";
+import CurrentFlightHeader from "src/app/(main)/components/CurrentFlightHeader";
 
 export default function TicketSummary() {
     const router = useRouter();
@@ -43,7 +44,7 @@ export default function TicketSummary() {
                 seatPrice,
                 meal: mealLabels.join(', '),
                 mealPrice,
-                baggageLabel: baggageLabels.join(', '),
+                baggage: baggageLabels.join(', '),
                 baggagePrice: baggageTotal,
             };
         };
@@ -119,12 +120,12 @@ export default function TicketSummary() {
         baggage: passengers.map((_, i) => {
             const p = buildPassengerDetails(i);
             const details = [
-                {route: 'Outbound', value: p.segments.outbound.baggageLabel, price: p.segments.outbound.baggagePrice},
+                {route: 'Outbound', value: p.segments.outbound.baggage, price: p.segments.outbound.baggagePrice},
             ];
             if (itinerary.return) {
                 details.push({
                     route: 'Return',
-                    value: p.segments.return.baggageLabel,
+                    value: p.segments.return.baggage,
                     price: p.segments.return.baggagePrice
                 });
             }
@@ -154,17 +155,10 @@ export default function TicketSummary() {
         .reduce((sum, price) => sum + price, 0);
 
     return (
-        <div className="pt-12">
-            <FlightSummaryHeader
-                departureCode={itinerary.outbound?.departureAirport.code ?? 'SYD'}
-                destinationCode={itinerary.outbound?.arrivalAirport.code ?? 'MEL'}
-                departureDate={itinerary.outbound?.departureTime.toString().slice(0, 10) ?? 'N/A'}
-                returnDate={itinerary.return?.departureTime.toString().slice(0, 10) ?? 'N/A'}
-                passengers={passengers.length}
-                flightClass={currentBooking.flightClass}
-            />
+        <div className="mt-20">
+            <CurrentFlightHeader/>
 
-            <div className="max-w-4xl mx-auto rounded-md shadow-sm bg-white px-4 sm:px-6">
+            <div className="mt-8 max-w-4xl mx-auto rounded-md shadow-sm bg-white px-4 sm:px-6">
                 <h1 className="text-2xl font-bold pt-6 pb-2">Booking Summary</h1>
                 <hr className="border-t border-gray-300 mt-2"/>
 
@@ -181,13 +175,13 @@ export default function TicketSummary() {
                         departure: {
                             seat: p.segments.outbound.seat,
                             meal: p.segments.outbound.meal,
-                            baggage: p.segments.outbound.baggageLabel,
+                            baggage: p.segments.outbound.baggage,
                         },
                         ...(p.segments.return.seat !== '–' && {
                             return: {
                                 seat: p.segments.return.seat,
                                 meal: p.segments.return.meal,
-                                baggage: p.segments.return.baggageLabel,
+                                baggage: p.segments.return.baggage,
                             },
                         }),
                     };
@@ -199,27 +193,28 @@ export default function TicketSummary() {
                     <BookingSummary data={bookingData}/>
                 </div>
 
-                <div className="flex justify-between pb-6 mx-6 text-base font-semibold">
-                    <span>Total:</span>
-                    <span className="text-blue-700">${total}</span>
-                </div>
-            </div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 pb-6">
+                    {/* Total */}
+                    <div className="text-base font-semibold">
+                        <span>Total: </span>
+                        <span className="text-blue-700">${total}</span>
+                    </div>
 
-            {/* Responsive Button Row */}
-            <div className="mt-4 mb-4 px-48 flex justify-end items-center">
-                <div className="flex gap-3 mr-52">
-                    <button
-                        onClick={() => router.back()}
-                        className="bg-white text-black py-3 px-6 rounded-md font-semibold border border-gray-300 hover:bg-gray-100 transition"
-                    >
-                        Return
-                    </button>
-                    <button
-                        onClick={() => router.push("/payment")}
-                        className="bg-blue-800 hover:bg-blue-900 text-white py-3 px-6 rounded-md font-semibold"
-                    >
-                        Proceed to Payment
-                    </button>
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-full sm:w-auto bg-white text-black py-3 px-6 rounded-md font-semibold border border-gray-300 hover:bg-gray-100 transition"
+                        >
+                            Return
+                        </button>
+                        <button
+                            onClick={() => router.push("/payment")}
+                            className="w-full sm:w-auto bg-blue-800 hover:bg-blue-900 text-white py-3 px-6 rounded-md font-semibold"
+                        >
+                            Proceed to Payment
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

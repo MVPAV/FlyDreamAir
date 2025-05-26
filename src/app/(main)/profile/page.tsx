@@ -1,4 +1,4 @@
-import {ProfileInterface} from "src/app/(main)/profile/components/profile";
+import {ProfileInterface} from "src/app/(main)/profile/components/Profile";
 
 export default function ProfilePage() {
   return (

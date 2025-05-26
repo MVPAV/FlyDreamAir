@@ -1,9 +1,12 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import { useRouter } from 'next/navigation';
-import { useBookingStore } from 'src/store/bookingStore';
-import { useMealTypeStore } from 'src/store/mealTypeStore'; // assuming you're caching this
+import {useRouter} from 'next/navigation';
+import {useBookingStore} from 'src/store/bookingStore';
+import {useMealTypeStore} from 'src/store/mealTypeStore';
+import {User} from "lucide-react";
+import CurrentFlightHeader from "src/app/(main)/components/CurrentFlightHeader";
+import FlightTabs from 'src/app/(main)/components/FlightTabs';
 
 export default function MealSelection() {
     const router = useRouter();
@@ -90,36 +93,17 @@ export default function MealSelection() {
     const handleContinue = () => router.push('/ticket-summary');
 
     return (
-        <div className="mt-24 flex flex-col min-h-screen">
+        <div className="mt-20 flex flex-col min-h-screen">
+            <CurrentFlightHeader/>
+
+            {itinerary.return && (
+                <div className="mt-6">
+                    <FlightTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
+            )}
+
             <main className="flex-1 bg-gray-50">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-                        <div className="text-lg font-semibold mb-2">Meal Selection</div>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700">
-                            <div>From: {itinerary.outbound?.departureAirport.code}</div>
-                            <div>To: {itinerary.outbound?.arrivalAirport.code}</div>
-                            <div>Passengers: {passengers.length}</div>
-                            <div>Class: Economy</div>
-                        </div>
-                    </div>
-
-                    {returnSegmentId && (
-                        <div className="grid grid-cols-2 gap-2 mb-6">
-                            <button
-                                className={`py-2 text-center rounded-md ${activeTab === 'outbound' ? 'bg-gray-300' : 'bg-gray-100'}`}
-                                onClick={() => setActiveTab('outbound')}
-                            >
-                                Outbound
-                            </button>
-                            <button
-                                className={`py-2 text-center rounded-md ${activeTab === 'return' ? 'bg-gray-300' : 'bg-gray-100'}`}
-                                onClick={() => setActiveTab('return')}
-                            >
-                                Return
-                            </button>
-                        </div>
-                    )}
-
+                <div className="max-w-5xl container mx-auto px-4 py-6">
                     {passengers.map((p, index) => {
                         const segmentId = getSegmentId();
                         if (!segmentId) return null;
@@ -129,25 +113,49 @@ export default function MealSelection() {
                                 <h2 className="text-xl font-semibold mb-1">Meals for Passenger {index + 1}</h2>
                                 <p className="text-gray-600 text-sm mb-4">Standard meal is included.</p>
 
+                                <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="bg-blue-900 text-white rounded-full p-2">
+                                            <User className="h-4 w-4"/>
+                                        </div>
+                                        <div>
+                                            <span className="text-sm font-medium text-gray-600">{p.firstName}</span>
+                                            <div className="text-lg font-semibold text-gray-900">{p.lastName}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {mealTypes.map((meal) => (
-                                        <div key={meal.id}>
-                                            <h3 className="font-semibold mb-1">{meal.name}</h3>
-                                            <div className="border border-gray-200 rounded-md p-4 mb-4">
-                                                <div className="flex justify-between items-center">
-                                                    <div>{meal.description}</div>
-                                                    <div className="flex items-center">
-                                                        {meal.price > 0 && (
-                                                            <span className="text-gray-700 mr-2">+${meal.price}</span>
-                                                        )}
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={isSelected(index, segmentId, meal.id)}
-                                                            onChange={() => handleToggleMeal(index, segmentId, meal.id)}
-                                                            className="h-4 w-4 text-blue-600 rounded"
-                                                        />
-                                                    </div>
+                                        <div
+                                            key={meal.id}
+                                            onClick={() => handleToggleMeal(index, segmentId, meal.id)}
+                                            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors cursor-pointer">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg font-semibold text-gray-900">{meal.name}</h3>
+                                                    <p className="text-gray-600 text-sm mt-1">{meal.description}</p>
                                                 </div>
+                                                <div className="text-right ml-4">
+                                                    {meal.price == 0 ? (
+                                                        <span className="text-green-600 font-medium">Included</span>
+                                                    ) : (
+                                                        <span
+                                                            className="text-blue-900 font-semibold">{meal.price}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected(index, segmentId, meal.id)}
+                                                    onChange={() => {}}
+                                                    className="h-4 w-4 text-blue-900 border-gray-300 rounded focus:ring-blue-500"
+                                                />
+                                                <label className="ml-2 text-sm text-gray-700 cursor-pointer">
+                                                    Select
+                                                </label>
                                             </div>
                                         </div>
                                     ))}
@@ -172,7 +180,7 @@ export default function MealSelection() {
                                 onClick={handleContinue}
                                 className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-700"
                             >
-                                Continue
+                                Continue to Review
                             </button>
                         </div>
                     </div>

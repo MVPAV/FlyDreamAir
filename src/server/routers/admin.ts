@@ -2,6 +2,7 @@ import {router, publicProcedure} from '../trpc';
 import {z} from 'zod';
 import {deleteUser, getAllUsers} from "src/server/db/admin/users";
 import {deletePassenger, getAllPassengers} from "src/server/db/admin/passengers";
+import {deleteBooking, getAllBookings} from "src/server/db/admin/bookings";
 
 export const adminRouter = router({
     getAllUsers: publicProcedure.query(async () => {
@@ -26,5 +27,17 @@ export const adminRouter = router({
         }))
         .mutation(async ({input}) => {
             return await deletePassenger(input.passengerId);
+        }),
+
+    getAllBookings: publicProcedure.query(async () => {
+        return await getAllBookings()
+    }),
+
+    deleteBooking: publicProcedure
+        .input(z.object({
+            bookingId: z.string()
+        }))
+        .mutation(async ({input}) => {
+            return await deleteBooking(input.bookingId);
         }),
 });
