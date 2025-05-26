@@ -1,19 +1,28 @@
 import {NextResponse} from "next/server";
 import {saltAndHashPassword} from 'src/utils/auth';
-import {createUser} from "src/server/db/users";
+import {createUser, getUserByEmail} from "src/server/db/users";
 
 export async function POST(request: Request) {
     try {
-        const {email, password} = await request.json();
+        const { email, password } = await request.json();
+
+        // Check if email already exists
+        const existingUser = await getUserByEmail(email);
+        if (existingUser) {
+            return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
+        }
+
         const hashedPassword = await saltAndHashPassword(password);
 
-        const response = await createUser({
+        await createUser({
             email,
-            password: hashedPassword
+            password: hashedPassword,
         });
-    } catch (e) {
-        console.log({e});
-    }
 
-    return NextResponse.json({message: "success"});
+        return NextResponse.json({ message: 'success' });
+    } catch (e) {
+        console.error(e);
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    }
 }
+

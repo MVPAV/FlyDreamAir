@@ -6,11 +6,8 @@ export async function deleteUser(userId: string) {
 
 export async function getAllUsers() {
     return await prisma.user.findMany({
-        select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-        },
+        include: {
+            bookings: true,
+        }
     });
 }

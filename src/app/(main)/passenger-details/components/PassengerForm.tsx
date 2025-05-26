@@ -42,6 +42,7 @@ const PassengerForm: React.FC = () => {
         passengers.forEach((p, idx) => {
             const passengerErrors: Record<string, string> = {};
 
+
             if (!p.firstName) passengerErrors.firstName = 'First name is required';
             if (!p.lastName) passengerErrors.lastName = 'Last name is required';
             if (!p.email) passengerErrors.email = 'Email is required';
@@ -94,6 +95,9 @@ const PassengerForm: React.FC = () => {
                                         <option>Mrs</option>
                                         <option>Miss</option>
                                     </select>
+                                    {errors[index]?.title && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.title}</p>
+                                    )}
                                 </div>
 
                                 <div>

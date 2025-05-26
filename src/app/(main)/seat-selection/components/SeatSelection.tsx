@@ -7,6 +7,7 @@ import {trpc} from 'src/utils/trpc';
 import {useSeatStore} from "src/store/seatStore";
 import PrimaryModal from "../../../components/PrimaryModal";
 import {useState} from "react";
+import FlightTabs from 'src/app/(main)/components/FlightTabs';
 
 export function SeatLegend() {
     return (
@@ -18,7 +19,7 @@ export function SeatLegend() {
                 <LegendItemUnavailable label="Unavailable"/>
             </div>
             <div className="border-t pt-4 text-sm text-black font-semibold">
-                <span className="font-bold">FD422</span> – Boeing 390-100AU
+                <span className="font-bold">FD422</span>
             </div>
         </div>
     );
@@ -50,16 +51,19 @@ const LegendItemUnavailable = ({label}: { label: string }) => (
 
 const SeatSelection = () => {
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState<'outbound' | 'return'>('outbound');
+
     const passengers = useBookingStore((s) => s.currentBooking.passengers);
-    const segment = useBookingStore((s) => s.currentBooking.itinerary.outbound); // change to 'return' if needed
+    const itinerary = useBookingStore((s) => s.currentBooking.itinerary);
+    const segment = activeTab === 'outbound' ? itinerary.outbound : itinerary.return;
     const updatePassengerTicketSeat = useBookingStore((s) => s.updatePassengerTicketSeat);
+    const setSeatsForSegment = useSeatStore((s) => s.setSeatsForSegment);
 
     const {data: seats, isLoading} = trpc.seats.getSeatsBySegment.useQuery(
         {segmentId: segment?.id ?? ''},
         {enabled: !!segment?.id}
     );
 
-    const setSeatsForSegment = useSeatStore((s) => s.setSeatsForSegment);
 
     useEffect(() => {
         if (segment?.id && seats) {
@@ -110,10 +114,14 @@ const SeatSelection = () => {
     const rows = Object.keys(layout).map(Number).sort((a, b) => a - b);
 
     return (
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 py-8">
             <div className="text-center text-xl sm:text-2xl font-semibold mb-4">Select Your Seats</div>
 
             <SeatLegend />
+
+            {itinerary.return && (
+                <FlightTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            )}
 
             {isLoading && <p className="text-center text-gray-500">Loading seat map...</p>}
 

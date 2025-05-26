@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { FaUsers, FaHome, FaUserFriends } from 'react-icons/fa';
+import {usePathname} from 'next/navigation';
+import {FaUsers, FaHome, FaUserFriends, FaClipboardList} from 'react-icons/fa'; // 📋 Use for bookings
 
 const navItems = [
-    { label: 'Dashboard', href: '/admin', icon: <FaHome /> },
-    { label: 'Users', href: '/admin/users', icon: <FaUsers /> },
-    { label: 'Passengers', href: '/admin/passengers', icon: <FaUserFriends /> },
+    {label: 'Dashboard', href: '/admin', icon: <FaHome/>},
+    {label: 'Users', href: '/admin/users', icon: <FaUsers/>},
+    {label: 'Passengers', href: '/admin/passengers', icon: <FaUserFriends/>},
+    {label: 'Bookings', href: '/admin/bookings', icon: <FaClipboardList/>},
 ];
 
 export default function AdminSidebar() {
