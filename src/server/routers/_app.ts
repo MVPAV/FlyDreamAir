@@ -6,11 +6,11 @@ import {baggagesRouter} from "src/server/routers/baggages";
 import {mealsRouter} from "src/server/routers/meals";
 import {bookingsRouter} from "src/server/routers/bookings";
 import {adminRouter} from "src/server/routers/admin";
-import {userRouter} from "src/server/routers/user";
+import {userRouter} from "src/server/routers/users";
 
 export const appRouter = router({
     example: exampleRouter,
-    user: userRouter,
+    users: userRouter,
     flights: flightsRouter,
     seats: seatsRouter,
     baggages: baggagesRouter,

@@ -46,7 +46,7 @@ export default function PrimaryModal({
                         <div
                             ref={modalRef}
                             className="bg-[#f3f6fb] w-full sm:max-w-md md:max-w-2xl rounded-2xl shadow-xl p-4 md:p-6
-                         max-h-[calc(100vh-4rem)] overflow-y-auto"
+                         max-h-[calc(100vh-15rem)] overflow-y-auto"
                         >
                             {children}
 

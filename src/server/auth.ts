@@ -1,7 +1,7 @@
-import { type NextAuthOptions } from "next-auth";
+import {type NextAuthOptions} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
-import { getUserByEmail } from "src/server/db/users";
+import {compare} from "bcrypt";
+import {getUserByEmail, getUserById} from "src/server/db/users";
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -13,29 +13,35 @@ export const authOptions: NextAuthOptions = {
     },
 
     callbacks: {
-        async session({ session, token, user }) {
-            if (session.user && token.sub) {
-                session.user.id = token.sub;
-            }
-
-            if (session.user && user) {
-                session.user.firstName = user.firstName;
-                session.user.lastName = user.lastName;
-                session.user.phoneNumber = user.phoneNumber;
-                session.user.dateOfBirth = user.dateOfBirth;
-                session.user.emergencyName = user.emergencyName;
-                session.user.emergencyPhone = user.emergencyPhone;
-                session.user.emergencyRelationship = user.emergencyRelationship;
-            }
-
-            return session;
-        },
-
-        async jwt({ token, user }) {
-            if (user) {
-                token.sub = user.id;
+        async jwt({token}) {
+            if (token.sub) {
+                const user = await getUserById(token.sub); // Refetch updated user
+                if (user) {
+                    token.firstName = user.firstName;
+                    token.lastName = user.lastName;
+                    token.phoneNumber = user.phoneNumber;
+                    token.dateOfBirth = user.dateOfBirth?.toISOString() ?? '';
+                    token.emergencyName = user.emergencyName;
+                    token.emergencyPhone = user.emergencyPhone;
+                    token.emergencyRelationship = user.emergencyRelationship;
+                }
             }
             return token;
+        },
+
+        async session({session, token}) {
+            if (session.user) {
+                session.user.id = token.id as string;
+                session.user.email = token.email as string;
+                session.user.firstName = token.firstName as string;
+                session.user.lastName = token.lastName as string;
+                session.user.phoneNumber = token.phoneNumber as string;
+                session.user.dateOfBirth = token.dateOfBirth as Date;
+                session.user.emergencyName = token.emergencyName as string;
+                session.user.emergencyPhone = token.emergencyPhone as string;
+                session.user.emergencyRelationship = token.emergencyRelationship as string;
+            }
+            return session;
         },
     },
 
@@ -63,9 +69,9 @@ export const authOptions: NextAuthOptions = {
                     lastName: user.lastName ?? '',
                     phoneNumber: user.phoneNumber ?? '',
                     dateOfBirth: user.dateOfBirth ?? undefined,
-                    emergencyName: user.emergencyName ?? undefined,
-                    emergencyPhone: user.emergencyPhone ?? undefined,
-                    emergencyRelationship: user.emergencyRelationship ?? undefined,
+                    emergencyName: user.emergencyName ?? '',
+                    emergencyPhone: user.emergencyPhone ?? '',
+                    emergencyRelationship: user.emergencyRelationship ?? '',
                 };
             },
         }),
