@@ -12,7 +12,7 @@ const ForgotPasswordForm = () => {
     };
 
     return (
-        <div className="pt-50 flex justify-center items-center bg-white">
+        <div className="py-20 flex justify-center items-center bg-white">
             <form
                 onSubmit={handleSubmit}
                 className="w-full max-w-lg md:max-w-3xl space-y-4 px-6 py-8 shadow-md rounded-md"

@@ -63,6 +63,22 @@ export async function confirmBooking(booking: ClientBooking, userId?: string) {
         data.user = {connect: {id: userId}};
     }
 
+    // Mark selected seats as unavailable
+    const allSeatIds = booking.passengers.flatMap((p) =>
+        p.tickets.map((t) => t.seatId)
+    );
+
+    await prisma.seat.updateMany({
+        where: {
+            id: {
+                in: allSeatIds,
+            },
+        },
+        data: {
+            isAvailable: false,
+        },
+    });
+
     const created = await prisma.booking.create({data});
     return created;
 }
@@ -94,6 +110,7 @@ export async function findBookingByReference(reference: string, lastName: string
                                 include: {
                                     departureAirport: true,
                                     arrivalAirport: true,
+                                    airline: true,
                                 },
                             },
                             seat: true,

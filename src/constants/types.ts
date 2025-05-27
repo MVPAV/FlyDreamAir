@@ -1,4 +1,15 @@
-import {Airline, Airport, BaggageType, Fare, FlightSegment, MealType} from "@prisma/client";
+import {
+    Airline,
+    Airport,
+    Baggage,
+    BaggageType, Fare,
+    FlightSegment,
+    Meal,
+    MealType,
+    Passenger,
+    Seat,
+    Ticket
+} from "@prisma/client";
 
 export interface ClientTicket {
     segmentId: string;
@@ -47,3 +58,15 @@ export interface ClientBooking {
     totalPrice: number;
 }
 
+export type FullTicket = Ticket & {
+    segment: FlightSegment & {
+        departureAirport: Airport;
+        arrivalAirport: Airport;
+        airline: Airline;
+    };
+    seat: Seat;
+    passenger: Passenger & {
+        meals: (Meal & { type: MealType })[];
+        bags: (Baggage & { type: BaggageType })[];
+    };
+};

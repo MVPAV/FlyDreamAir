@@ -33,24 +33,6 @@ export const bookingsRouter = router({
                     .map(p => `${p.title} ${p.firstName} ${p.lastName}`)
                     .join(', ');
 
-                const seatSummary = booking.passengers
-                    .flatMap((p) =>
-                        p.tickets.map((t) => getSeatNumberById(t.seatId) || '—')
-                    )
-                    .join(', ');
-
-                const mealSummary = booking.passengers
-                    .flatMap((p) =>
-                        p.meals.map((m) => getMealTypeById(m.typeId)?.name || '—')
-                    )
-                    .join(', ');
-
-                const baggageSummary = booking.passengers
-                    .flatMap((p) =>
-                        p.baggages.map((b) => getBaggageTypeById(b.typeId)?.name || '—')
-                    )
-                    .join(', ');
-
                 const departureDateStr = booking.itinerary.outbound?.departureTime
                     ? new Date(booking.itinerary.outbound.departureTime).toLocaleDateString()
                     : 'N/A';
@@ -68,7 +50,7 @@ export const bookingsRouter = router({
                         product_name: "FlyDreamAir",
                         name: booking.passengers[0].firstName,
                         company_name: "FlyDreamAir",
-                        booking_code: newBooking.bookingCode,
+                        booking_code: newBooking,
                         passenger_names: passengerNames,
                         flight_class: booking.flightClass,
                         total_price: `$${booking.totalPrice}`,
@@ -77,10 +59,7 @@ export const bookingsRouter = router({
                         arrival_code: booking.itinerary.outbound?.arrivalAirport.code ?? '–',
                         departure_date: departureDateStr,
                         return_date: returnDateStr,
-                        seat_summary: seatSummary,
-                        meal_summary: mealSummary,
-                        baggage_summary: baggageSummary,
-                        manage_booking_url: `https://flydreamair.com/bookings/${newBooking.id}`,
+                        manage_booking_url: `https://flydreamair.com/manage-booking/?reference=${newBooking.bookingCode}&lastName=${booking.passengers[0].lastName}`,
                         support_email: "support@flydreamair.com",
                         help_url: "https://flydreamair.com/help",
                         sender_name: "FlyDreamAir Support",

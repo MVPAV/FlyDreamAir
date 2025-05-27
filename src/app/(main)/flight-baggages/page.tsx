@@ -1,15 +1,20 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import FlightSummaryHeader from '../components/FlightSummaryHeader';
 import BaggageSelector from './components/BaggageSelector';
 import BaggageInfo from './components/BaggageInfo';
-import { useBookingStore } from 'src/store/bookingStore';
-import { useBaggageTypeStore } from 'src/store/baggageTypeStore'; // if separated
+import {useBookingStore} from 'src/store/bookingStore';
+import {useBaggageTypeStore} from 'src/store/baggageTypeStore';
+import CurrentFlightHeader from "src/app/(main)/components/CurrentFlightHeader";
+import FlightTabs from 'src/app/(main)/components/FlightTabs';
+import {useState} from "react";
 
 function FlightBaggage() {
     const router = useRouter();
+
+    const [activeTab, setActiveTab] = useState<'outbound' | 'return'>('outbound');
 
     const passengers = useBookingStore((s) => s.currentBooking.passengers);
     const itinerary = useBookingStore((s) => s.currentBooking.itinerary);
@@ -49,52 +54,42 @@ function FlightBaggage() {
         };
     };
 
-    const { totalStandard, totalOversized, totalPrice } = getTotalBaggageCount();
+    const {totalStandard, totalOversized, totalPrice} = getTotalBaggageCount();
 
     return (
         <main className="flex flex-col w-full px-4 sm:px-6 lg:px-8 pt-20">
-            <FlightSummaryHeader
-                departureCode={itinerary.outbound?.departureAirport.code ?? 'SYD'}
-                destinationCode={itinerary.outbound?.arrivalAirport.code ?? 'MEL'}
-                departureDate={
-                    itinerary.outbound
-                        ? new Date(itinerary.outbound.departureTime).toDateString()
-                        : ''
-                }
-                returnDate={
-                    itinerary.return
-                        ? new Date(itinerary.return.departureTime).toDateString()
-                        : ''
-                }
-                passengers={passengers.length}
-                flightClass="Economy"
-            />
+            <CurrentFlightHeader/>
 
-            <div className="max-w-4xl w-full mx-auto bg-white p-10 pt-5 shadow-lg text-left">
+            <div className="max-w-4xl w-full mx-auto bg-white p-10 pt-5 shadow-lg text-left mt-8">
                 <div className="mb-6">
                     <p className="text-2xl font-bold mb-2">Select Your Baggage</p>
-                    <BaggageInfo />
+                    <BaggageInfo/>
                 </div>
 
-                <BaggageSelector />
+                {itinerary.return && (
+                    <FlightTabs activeTab={activeTab} setActiveTab={setActiveTab}/>
+                )}
 
-                <div className="mt-8 p-4 sm:p-6 flex flex-col gap-4">
+                <BaggageSelector activeTab={activeTab}/>
+
+                <div className="mt-8 flex flex-col">
                     <p className="text-base sm:text-xl font-semibold text-black text-center sm:text-left leading-relaxed">
                         Baggage Total: {totalStandard} Standard, {totalOversized} Oversized
-                        <br />
+                        <br/>
                         <span className="text-blue-800">Total: ${totalPrice}</span>
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-end">
+                    <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-end">
                         <button
-                            className="w-full sm:w-auto px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                            type="button"
                             onClick={() => router.back()}
+                            className="w-full sm:w-auto bg-white border border-gray-300 px-6 py-3 rounded-md shadow hover:bg-gray-100"
                         >
-                            Back to Seat
+                            Back to Seat Selection
                         </button>
                         <button
                             onClick={() => router.push('/flight-meal')}
-                            className="w-full sm:w-auto px-6 py-2 bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                            className="w-full sm:w-auto bg-blue-700 text-white px-6 py-3 rounded-md shadow hover:bg-blue-800"
                         >
                             Continue to Food Selections
                         </button>

@@ -4,6 +4,7 @@ import "./globals.css";
 import {ReactNode} from "react";
 import {NuqsAdapter} from 'nuqs/adapters/next/app'
 import ClientHydrationProvider from "src/app/components/ClientHydrationProvider";
+import {LayoutSessionProvider} from "src/app/components/LayoutSessionProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -24,8 +25,10 @@ export default function RootLayout({children}: {
         >
         <TRPCProvider>
             <NuqsAdapter>
-                <ClientHydrationProvider/>
-                {children}
+                <LayoutSessionProvider>
+                    <ClientHydrationProvider/>
+                    {children}
+                </LayoutSessionProvider>
             </NuqsAdapter>
         </TRPCProvider>
         </body>

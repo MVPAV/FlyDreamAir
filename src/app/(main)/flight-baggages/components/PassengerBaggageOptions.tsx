@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React from "react";
 import { FaSuitcase, FaDollyFlatbed } from "react-icons/fa";
 import BaggageCounter from "./BaggageCounter";
@@ -57,18 +57,17 @@ const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
     };
 
     return (
-        <div className="flex flex-col gap-7 w-full">
+        <div className="flex flex-col gap-6 w-full">
             {/* Standard Baggage */}
-            <article className="flex flex-col w-full rounded-2xl border border-gray-300 px-5 py-4 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-black mb-4">
+            <article className="flex flex-col gap-4 w-full rounded-2xl border border-gray-300 px-4 sm:px-5 py-4 shadow-sm bg-white">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <FaSuitcase className="text-blue-800 text-2xl sm:text-3xl" />
-                    <h4 className="text-base sm:text-lg font-semibold">
-                        Standard Checked Bag (23kg - max 3 bags)
+                    <h4 className="text-base sm:text-lg font-semibold text-black leading-snug break-words">
+                        Standard Checked Bag (23kg – max 3 bags)
                     </h4>
                 </div>
-
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <p className="text-sm text-gray-600 sm:max-w-md">
+                    <p className="text-sm sm:text-base text-gray-600 sm:max-w-lg">
                         Add standard checked bags for this passenger.
                     </p>
                     <BaggageCounter
@@ -80,16 +79,15 @@ const PassengerBaggageOptions: React.FC<PassengerBaggageOptionsProps> = ({
             </article>
 
             {/* Oversized Baggage */}
-            <article className="flex flex-col w-full rounded-2xl border border-gray-300 px-5 py-4 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-black mb-4">
+            <article className="flex flex-col gap-4 w-full rounded-2xl border border-gray-300 px-5 py-4 shadow-sm bg-white">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <FaDollyFlatbed className="text-blue-800 text-2xl sm:text-3xl" />
-                    <h4 className="text-base sm:text-lg font-semibold">
-                        Oversized/Overweight Bag (32kg - max 2 bags)
+                    <h4 className="text-base sm:text-lg font-semibold text-black leading-snug break-words">
+                        Oversized/Overweight Bag (32kg – max 2 bags)
                     </h4>
                 </div>
-
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <p className="text-sm text-gray-600 sm:max-w-md">
+                    <p className="text-sm sm:text-base text-gray-600 sm:max-w-lg">
                         Add oversized or overweight bags for this passenger.
                     </p>
                     <BaggageCounter
