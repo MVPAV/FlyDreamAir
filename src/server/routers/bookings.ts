@@ -1,7 +1,7 @@
 import {publicProcedure, router} from '../trpc';
 import {z} from 'zod';
 import {confirmBooking, findBookingByReference} from 'src/server/db/bookings';
-import postmark from 'postmark';
+import {ServerClient} from 'postmark';
 import * as process from 'node:process';
 import {ClientBooking} from "src/constants/types";
 import {useSeatStore} from "src/store/seatStore";
@@ -26,7 +26,7 @@ export const bookingsRouter = router({
             const getBaggageTypeById = useBaggageTypeStore.getState().getBaggageTypeById;
 
             if (process.env.POSTMARK_CLIENT) {
-                const client = new postmark.ServerClient(process.env.POSTMARK_CLIENT);
+                const client = new ServerClient(process.env.POSTMARK_CLIENT);
 
                 // Extract values from booking object
                 const passengerNames = booking.passengers
