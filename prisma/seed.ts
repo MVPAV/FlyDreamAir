@@ -1,4 +1,5 @@
 import {FareClass, PrismaClient} from '@prisma/client';
+import {subMinutes} from 'date-fns'; // ✅ Import from date-fns
 
 const prisma = new PrismaClient();
 
@@ -14,7 +15,7 @@ async function main() {
         },
     });
 
-    // Seed Australian airports
+    // Seed airports
     const airportMap: Record<string, string> = {};
     const airports = [
         {code: 'SYD', name: 'Sydney Kingsford Smith Airport', city: 'Sydney'},
@@ -48,6 +49,7 @@ async function main() {
             arrival: new Date('2025-12-22T09:35:00+10:00'),
             seatCapacity: 180,
             fareClass: 'ECONOMY',
+            gate: 'G2'
         },
         {
             flightNumber: 'QF402',
@@ -57,6 +59,7 @@ async function main() {
             arrival: new Date('2025-12-22T19:40:00+10:00'),
             seatCapacity: 180,
             fareClass: 'ECONOMY',
+            gate: 'T1'
         },
         {
             flightNumber: 'QF700',
@@ -66,10 +69,13 @@ async function main() {
             arrival: new Date('2025-07-02T12:10:00+08:00'),
             seatCapacity: 220,
             fareClass: 'BUSINESS',
+            gate: 'S1'
         },
     ];
 
     for (const flight of flightSegments) {
+        const boardingTime = subMinutes(flight.departure, 30);
+
         const segment = await prisma.flightSegment.upsert({
             where: {flightNumber: flight.flightNumber},
             update: {},
@@ -77,15 +83,17 @@ async function main() {
                 flightNumber: flight.flightNumber,
                 departureTime: flight.departure,
                 arrivalTime: flight.arrival,
+                boardingTime,
                 seatCapacity: flight.seatCapacity,
                 fareClass: flight.fareClass as FareClass,
                 airlineId: qantas.id,
                 departureAirportId: airportMap[flight.from],
                 arrivalAirportId: airportMap[flight.to],
+                gate: flight.gate,
             },
         });
 
-        // Add 2 fare options per segment
+        // Add fare options
         await prisma.fare.createMany({
             data: [
                 {
@@ -110,55 +118,20 @@ async function main() {
 
     await prisma.baggageType.createMany({
         data: [
-            {
-                id: 'standard-id',
-                name: 'Standard',
-                maxWeight: 20,
-                price: 30,
-            },
-            {
-                id: 'oversized-id',
-                name: 'Oversized',
-                maxWeight: 32,
-                price: 50,
-            },
-            {
-                name: 'Cabin',
-                maxWeight: 7,
-                price: 0,
-            },
+            {id: 'standard-id', name: 'Standard', maxWeight: 20, price: 30},
+            {id: 'oversized-id', name: 'Oversized', maxWeight: 32, price: 50},
+            {name: 'Cabin', maxWeight: 7, price: 0},
         ],
         skipDuplicates: true,
     });
 
-    // Seed Meal Types
     await prisma.mealType.createMany({
         data: [
-            {
-                name: 'Standard',
-                description: 'Regular meal with meat and vegetables.',
-                price: 0,
-            },
-            {
-                name: 'Vegetarian',
-                description: 'Meat-free meal with dairy and vegetables.',
-                price: 5,
-            },
-            {
-                name: 'Vegan',
-                description: 'No meat, dairy, or animal products.',
-                price: 7,
-            },
-            {
-                name: 'Halal',
-                description: 'Prepared in accordance with Islamic dietary laws.',
-                price: 6,
-            },
-            {
-                name: 'Kosher',
-                description: 'Prepared in accordance with Jewish dietary laws.',
-                price: 6,
-            },
+            {name: 'Standard', description: 'Regular meal with meat and vegetables.', price: 0},
+            {name: 'Vegetarian', description: 'Meat-free meal with dairy and vegetables.', price: 5},
+            {name: 'Vegan', description: 'No meat, dairy, or animal products.', price: 7},
+            {name: 'Halal', description: 'Prepared in accordance with Islamic dietary laws.', price: 6},
+            {name: 'Kosher', description: 'Prepared in accordance with Jewish dietary laws.', price: 6},
         ],
         skipDuplicates: true,
     });
@@ -170,7 +143,7 @@ async function main() {
     };
 
     const columns = ['A', 'B', 'C', 'D', 'E', 'F'];
-    const rows = Array.from({length: 10}, (_, i) => i + 1); // rows 1–10
+    const rows = Array.from({length: 10}, (_, i) => i + 1);
 
     async function createSeatsForSegment(segmentId: string) {
         const seats = rows.flatMap(row =>
@@ -187,16 +160,20 @@ async function main() {
                 };
             })
         );
-
         await prisma.seat.createMany({data: seats});
     }
 
-    const segment = await prisma.flightSegment.findFirst({
-        where: {flightNumber: 'QF401'},
+    let segments = await prisma.flightSegment.findMany({
+        where: {
+            flightNumber: {
+                in: ['QF401', 'QF402']
+            }
+        },
     });
 
-    if (segment) {
+    for (let segment of segments) {
         await createSeatsForSegment(segment.id);
+
     }
 
     console.log('✅ Seeded');

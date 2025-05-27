@@ -3,6 +3,7 @@
 import React, { ChangeEvent, FormEvent } from 'react';
 import { useBookingStore } from 'src/store/bookingStore';
 import { useRouter } from 'next/navigation';
+import {useState} from "react";
 
 const PassengerForm: React.FC = () => {
     const router = useRouter();
@@ -12,17 +13,55 @@ const PassengerForm: React.FC = () => {
     const removePassenger = useBookingStore((s) => s.removePassenger);
     const updatePassengerField = useBookingStore((s) => s.updatePassengerField);
 
+    const [errors, setErrors] = useState<{ [key: number]: Partial<Record<string, string>> }>({});
+
     const handleChange = (
         index: number,
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         const { id, value } = e.target;
         updatePassengerField(index, id as keyof typeof passengers[0], value);
+        setErrors((prevErrors) => {
+            const updated = { ...prevErrors };
+            if (updated[index]?.[id]) {
+                delete updated[index]?.[id];
+                if (Object.keys(updated[index]!).length === 0) {
+                    delete updated[index];
+                }
+            }
+            return updated;
+        });
     };
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        router.push('/seat-selection');
+
+        let hasError = false;
+        const newErrors: typeof errors = {};
+
+        passengers.forEach((p, idx) => {
+            const passengerErrors: Record<string, string> = {};
+
+
+            if (!p.firstName) passengerErrors.firstName = 'First name is required';
+            if (!p.lastName) passengerErrors.lastName = 'Last name is required';
+            if (!p.email) passengerErrors.email = 'Email is required';
+            if (!p.phone) passengerErrors.phone = 'Phone is required';
+            if (!p.dob) passengerErrors.dob = 'Date of birth is required';
+            if (!p.title) passengerErrors.title = 'Title is required';
+            if (!p.passport) passengerErrors.passport = 'Passport is required';
+
+            if (Object.keys(passengerErrors).length > 0) {
+                hasError = true;
+                newErrors[idx] = passengerErrors;
+            }
+        });
+
+        setErrors(newErrors);
+
+        if (!hasError) {
+            router.push('/seat-selection');
+        }
     };
 
     return (
@@ -56,6 +95,9 @@ const PassengerForm: React.FC = () => {
                                         <option>Mrs</option>
                                         <option>Miss</option>
                                     </select>
+                                    {errors[index]?.title && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.title}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -68,6 +110,9 @@ const PassengerForm: React.FC = () => {
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                         placeholder="First name"
                                     />
+                                    {errors[index]?.firstName && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.firstName}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -80,6 +125,9 @@ const PassengerForm: React.FC = () => {
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                         placeholder="Last name"
                                     />
+                                    {errors[index]?.lastName && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.lastName}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -91,6 +139,9 @@ const PassengerForm: React.FC = () => {
                                         onChange={(e) => handleChange(index, e)}
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                     />
+                                    {errors[index]?.dob && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.dob}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -103,6 +154,9 @@ const PassengerForm: React.FC = () => {
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                         placeholder="Email"
                                     />
+                                    {errors[index]?.email && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.email}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -115,6 +169,9 @@ const PassengerForm: React.FC = () => {
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                         placeholder="Phone"
                                     />
+                                    {errors[index]?.phone && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.phone}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -127,6 +184,9 @@ const PassengerForm: React.FC = () => {
                                         className="w-full border border-gray-300 rounded-md px-4 py-2"
                                         placeholder="e.g. P12345678"
                                     />
+                                    {errors[index]?.passport && (
+                                        <p className="text-sm text-red-600 mt-1">{errors[index]?.passport}</p>
+                                    )}
                                 </div>
                             </div>
 

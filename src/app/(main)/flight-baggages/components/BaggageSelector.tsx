@@ -6,7 +6,7 @@ import {useBaggageTypeStore} from 'src/store/baggageTypeStore';
 import {FlightInformation} from './FlightInformation';
 import PassengerBaggageOptions from './PassengerBaggageOptions';
 
-const BaggageSelector: React.FC = () => {
+const BaggageSelector: React.FC<{ activeTab: 'outbound' | 'return' }> = ({activeTab}) => {
     const passengers = useBookingStore((s) => s.currentBooking.passengers);
     const outboundSegmentId = useBookingStore((s) => s.currentBooking.itinerary.outbound?.id);
     const returnSegmentId = useBookingStore((s) => s.currentBooking.itinerary.return?.id);
@@ -72,54 +72,105 @@ const BaggageSelector: React.FC = () => {
             </div>
 
             {passengers.map((passenger, index) => {
-                const stdOutbound = outboundSegmentId ? countType(index, outboundSegmentId, standard.id) : 0;
-                const ovOutbound = outboundSegmentId ? countType(index, outboundSegmentId, oversized.id) : 0;
-                const stdReturn = returnSegmentId ? countType(index, returnSegmentId, standard.id) : 0;
-                const ovReturn = returnSegmentId ? countType(index, returnSegmentId, oversized.id) : 0;
+                const showOutbound = activeTab === 'outbound' && outboundSegmentId;
+                const showReturn = activeTab === 'return' && returnSegmentId;
+
+                const stdOutbound = countType(index, outboundSegmentId!, standard.id);
+                const ovOutbound = countType(index, outboundSegmentId!, oversized.id);
+                const stdReturn = countType(index, returnSegmentId!, standard.id);
+                const ovReturn = countType(index, returnSegmentId!, oversized.id);
 
                 return (
-                    <div key={index} className="mb-4">
+                    <div key={index} className="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm">
                         <h4 className="text-lg font-semibold mb-4">
                             Passenger {index + 1}: {passenger.firstName} {passenger.lastName}
                         </h4>
 
-                        {outboundSegmentId && (
+                        {showOutbound && (
                             <>
-                                <FlightInformation departureAirport="Sydney" destinationAirport="Melbourne"/>
                                 <PassengerBaggageOptions
                                     passengerIndex={index}
                                     initialStandardCount={stdOutbound}
                                     initialOversizedCount={ovOutbound}
                                     onBaggageChange={(_, standard, oversized) =>
-                                        handleBaggageChange(index, outboundSegmentId, standard, oversized)
+                                        handleBaggageChange(index, outboundSegmentId!, standard, oversized)
                                     }
                                 />
                             </>
                         )}
 
-                        {returnSegmentId && (
-                            <div className="mt-6">
-                                <FlightInformation departureAirport="Melbourne" destinationAirport="Sydney"/>
+                        {showReturn && (
+                            <>
                                 <PassengerBaggageOptions
                                     passengerIndex={index}
                                     initialStandardCount={stdReturn}
                                     initialOversizedCount={ovReturn}
                                     onBaggageChange={(_, standard, oversized) =>
-                                        handleBaggageChange(index, returnSegmentId, standard, oversized)
+                                        handleBaggageChange(index, returnSegmentId!, standard, oversized)
                                     }
                                 />
-                            </div>
+                            </>
                         )}
 
-                        <div className="mt-4 text-base font-medium">
-                            Summary: {stdOutbound + stdReturn} standard, {ovOutbound + ovReturn} oversized → Total:
-                            ${getPassengerTotal(index)}
+                        <div className="mt-6 space-y-3 text-sm sm:text-base text-gray-800">
+                            {/* Outbound */}
+                            {(stdOutbound > 0 || ovOutbound > 0) && (
+                                <div className="bg-blue-50 border border-blue-100 rounded-md p-3 shadow-sm">
+                                    <p className="font-semibold text-blue-900 mb-1">Outbound Segment</p>
+                                    <div className="flex flex-wrap gap-3 text-sm">
+                                        {stdOutbound > 0 && (
+                                            <span
+                                                className="bg-blue-200 text-blue-900 px-3 py-1 rounded-full font-medium">
+            {stdOutbound} Standard
+          </span>
+                                        )}
+                                        {ovOutbound > 0 && (
+                                            <span
+                                                className="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full font-medium">
+            {ovOutbound} Oversized
+          </span>
+                                        )}
+                                        <span className="ml-auto font-semibold">
+          Subtotal: ${stdOutbound * standard.price + ovOutbound * oversized.price}
+        </span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Return */}
+                            {(stdReturn > 0 || ovReturn > 0) && (
+                                <div className="bg-green-50 border border-green-100 rounded-md p-3 shadow-sm">
+                                    <p className="font-semibold text-green-900 mb-1">Return Segment</p>
+                                    <div className="flex flex-wrap gap-3 text-sm">
+                                        {stdReturn > 0 && (
+                                            <span
+                                                className="bg-blue-200 text-blue-900 px-3 py-1 rounded-full font-medium">
+            {stdReturn} Standard
+          </span>
+                                        )}
+                                        {ovReturn > 0 && (
+                                            <span
+                                                className="bg-yellow-200 text-yellow-900 px-3 py-1 rounded-full font-medium">
+            {ovReturn} Oversized
+          </span>
+                                        )}
+                                        <span className="ml-auto font-semibold">
+          Subtotal: ${stdReturn * standard.price + ovReturn * oversized.price}
+        </span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Combined total */}
+                            <div className="text-right text-base sm:text-lg font-bold text-blue-800 mt-2">
+                                Total for Passenger: ${getPassengerTotal(index)}
+                            </div>
                         </div>
                     </div>
                 );
             })}
 
-            <div className="pt-6 border-t mt-4 text-lg font-semibold">
+            <div className="pt-6 mt-4 text-lg font-semibold">
                 <span>Total Baggage Cost: </span>
                 <span className="text-blue-700">${getAllTotal()}</span>
             </div>

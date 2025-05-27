@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import FlightSummaryHeader from "../components/FlightSummaryHeader";
 import PaymentForm from "./components/PaymentForm";
 
 import {useBookingStore} from "src/store/bookingStore";
@@ -10,6 +9,10 @@ import {useMealTypeStore} from "src/store/mealTypeStore";
 import {useSeatStore} from "src/store/seatStore";
 import PassengerInfoList from "src/app/(main)/payment/components/PassengerInfoList";
 import {trpc} from "src/utils/trpc";
+import CurrentFlightHeader from "src/app/(main)/components/CurrentFlightHeader";
+import PrimaryModal from "src/app/components/PrimaryModal";
+import { useSession } from "next-auth/react";
+
 
 export default function Payment() {
     const {currentBooking} = useBookingStore();
@@ -21,6 +24,10 @@ export default function Payment() {
     const getSeatById = useSeatStore((s) => s.getSeatById);
     const {mutate: confirmBooking} = trpc.bookings.confirmBooking.useMutation();
     const updateTotalPrice = useBookingStore((s) => s.updateTotalPrice)
+    const { data: session } = useSession();
+    const userId = session?.user?.id;
+    const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+    const [showErrorModal, setShowErrorModal] = React.useState(false);
 
     const buildPassengerSummaries = () => {
         return passengers.map((p) => {
@@ -92,32 +99,28 @@ export default function Payment() {
     const handlePaymentSubmit = () => {
         confirmBooking(
             {
-                booking: currentBooking
+                booking: currentBooking,
+                userId: userId,
             },
             {
                 onSuccess: (data) => {
                     console.log('Booking confirmed:', data);
+                    setShowSuccessModal(true);
                 },
                 onError: (error) => {
                     console.error('Booking confirmation failed:', error);
+                    setShowErrorModal(true);
                 },
             }
         );
     };
 
     return (
-        <div className="pt-18 bg-white flex flex-col overflow-hidden items-stretch">
-            <FlightSummaryHeader
-                departureCode={itinerary.outbound?.departureAirport.code ?? "SYD"}
-                destinationCode={itinerary.outbound?.arrivalAirport.code ?? "MEL"}
-                departureDate={itinerary.outbound?.departureTime?.toString().slice(0, 10) ?? "N/A"}
-                returnDate={itinerary.return?.departureTime?.toString().slice(0, 10) ?? ""}
-                passengers={passengers.length}
-                flightClass={currentBooking.flightClass}
-            />
+        <div className="pt-20 bg-white flex flex-col overflow-hidden items-stretch">
+            <CurrentFlightHeader/>
 
             <main
-                className="bg-white self-center flex w-full max-w-[1191px] flex-col text-xl font-semibold pt-[34px] pb-[76px] px-[43px] border-[rgba(0,0,0,0.2)] border-r border-l max-md:max-w-full max-md:px-5">
+                className="mt-8 bg-white self-center flex w-full max-w-5xl flex-col text-xl font-semibold pt-[34px] pb-[76px] px-[43px] border-[rgba(0,0,0,0.2)] border-r border-l max-md:max-w-full max-md:px-5">
                 <div
                     className="self-stretch flex items-stretch gap-5 text-md font-bold flex-wrap justify-between max-md:max-w-full">
                     <h1 className="text-black">Payment</h1>
@@ -133,6 +136,24 @@ export default function Payment() {
 
                 <PaymentForm onSubmit={handlePaymentSubmit}/>
             </main>
+
+            <PrimaryModal
+                showModal={showSuccessModal}
+                setShowModal={setShowSuccessModal}
+                onCloseModal={() => setShowSuccessModal(false)}
+            >
+                <h2 className="text-lg font-semibold mb-2">Booking Confirmed</h2>
+                <p>Your booking has been successfully confirmed!</p>
+            </PrimaryModal>
+
+            <PrimaryModal
+                showModal={showErrorModal}
+                setShowModal={setShowErrorModal}
+                onCloseModal={() => setShowErrorModal(false)}
+            >
+                <h2 className="text-lg font-semibold mb-2 text-red-600">Booking Failed</h2>
+                <p>There was an error while processing your booking. Please try again.</p>
+            </PrimaryModal>
         </div>
     );
 }
