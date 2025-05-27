@@ -6,37 +6,15 @@ import {trpc} from 'src/utils/trpc';
 import PassengerTickets from "src/app/(main)/manage-booking/components/PassengerTickets";
 import BoardingPass from "src/app/(main)/components/BoardingPass";
 import PrimaryModal from "src/app/components/PrimaryModal";
-import {
-    Airline,
-    Airport,
-    Baggage,
-    BaggageType,
-    FlightSegment,
-    Meal,
-    MealType,
-    Passenger,
-    Seat,
-    Ticket
-} from "@prisma/client";
-
-type FullTicket = Ticket & {
-    segment: FlightSegment & {
-        departureAirport: Airport;
-        arrivalAirport: Airport;
-        airline: Airline;
-    };
-    seat: Seat;
-    passenger: Passenger & {
-        meals: (Meal & { type: MealType })[];
-        bags: (Baggage & { type: BaggageType })[];
-    };
-};
+import {FullTicket} from "src/constants/types";
+import {Ticket} from "@prisma/client";
+import {useQueryState} from 'nuqs';
 
 export default function ManageBooking() {
     const [activeTab, setActiveTab] = useState<'booking' | 'email'>('booking');
-    const [bookingCode, setBookingCode] = useState('');
-    const [lastName, setLastName] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [bookingCode, setBookingCode] = useQueryState('reference');
+    const [lastName, setLastName] = useQueryState('lastName');
 
     const [showTicket, setShowTicket] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState<FullTicket | null>(null);
@@ -47,7 +25,7 @@ export default function ManageBooking() {
         isFetching,
         error,
     } = trpc.bookings.findBookingByReference.useQuery(
-        {reference: bookingCode, lastName},
+        {reference: bookingCode ?? '', lastName: lastName ?? ''},
         {enabled: false}
     );
 
@@ -130,7 +108,7 @@ export default function ManageBooking() {
                                     <label className="block font-medium mb-1">Booking Reference</label>
                                     <input
                                         type="text"
-                                        value={bookingCode}
+                                        value={bookingCode ?? ''}
                                         onChange={(e) => setBookingCode(e.target.value)}
                                         placeholder="e.g., ABCDEF"
                                         className="w-full border border-gray-300 rounded-lg p-3"
@@ -142,7 +120,7 @@ export default function ManageBooking() {
                                     <label className="block font-medium mb-1">Last Name</label>
                                     <input
                                         type="text"
-                                        value={lastName}
+                                        value={lastName ?? ''}
                                         onChange={(e) => setLastName(e.target.value)}
                                         placeholder="e.g., Smith"
                                         className="w-full border border-gray-300 rounded-lg p-3"
@@ -241,7 +219,7 @@ export default function ManageBooking() {
             <PrimaryModal showModal={showTicket} setShowModal={setShowTicket} showCloseButton={false}>
                 {selectedTicket && (
                     <BoardingPass
-                        ticketId={selectedTicket.id}
+                        ticketId={selectedTicket.ticketNumber}
                         flightNumber={selectedTicket.segment.flightNumber}
                         from={{
                             code: selectedTicket.segment.departureAirport.code,
@@ -280,7 +258,7 @@ export default function ManageBooking() {
                         specialRequest={
                             selectedTicket.passenger.meals[0]?.type.description ?? ''
                         }
-                        qrCodeUrl="/qrcode.png"
+                        qrCodeUrl="/qrcode.jpg"
                         onReturn={() => setShowTicket(false)}
                     />
                 )}

@@ -1,6 +1,6 @@
 import {publicProcedure, router} from '../trpc';
 import {z} from "zod";
-import {updateUserProfile} from "src/server/db/user";
+import {getUserBookings, updateUserProfile} from "src/server/db/users";
 
 export const userRouter = router({
     updateProfile: publicProcedure
@@ -18,5 +18,13 @@ export const userRouter = router({
             if (userId) {
                 return updateUserProfile(userId, input);
             }
+        }),
+
+    getUserBookingss: publicProcedure
+        .query(async ({input, ctx}) => {
+            const userId = ctx.session?.user?.id;
+            if (!userId) throw new Error("Unauthorized");
+
+            return getUserBookings(userId);
         }),
 });
