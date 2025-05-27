@@ -53,7 +53,7 @@ export default function Footer() {
                         <button className="bg-sky-300 text-black text-sm px-4 py-2 rounded-r-md">Subscribe</button>
                     </div>
                     <p className="text-sm flex items-center gap-2">
-                        📧 <a href="mailto:contact@flydreamair.com">contact@flydreamair.com</a>
+                        📧 <a href="mailto:contact@flydreamair-552450687331.europe-west1.run.app">contact@flydreamair-552450687331.europe-west1.run.app</a>
                     </p>
                     <p className="text-sm flex items-center gap-2 mt-2">
                         📞 1800 0123
