@@ -17,6 +17,7 @@ export const authOptions: NextAuthOptions = {
             if (token.sub) {
                 const user = await getUserById(token.sub); // Refetch updated user
                 if (user) {
+                    token.id = user.id;
                     token.firstName = user.firstName;
                     token.lastName = user.lastName;
                     token.phoneNumber = user.phoneNumber;
