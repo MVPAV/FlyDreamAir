@@ -95,7 +95,7 @@ const MealSelectPage = () => {
           </div>
           
           <div className="flex space-x-4">
-            <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="px-6 py-3 border border-gray-600 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
               Back to Baggage
             </button>
             <button className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors">
